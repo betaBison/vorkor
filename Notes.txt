@@ -1,0 +1,14 @@
+assume fixed-wing vs. quadrotor
+radar input with recursive ransack
+class of intruders
+	initialize (position, velocity)
+	rotation matrices, trajectories	
+	hold min turn radius
+	return trajectory
+
+class ownship (min radius, parameters)
+	
+
+graph everything in 3D:
+	
+	

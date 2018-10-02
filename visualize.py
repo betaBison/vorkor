@@ -6,7 +6,8 @@ import numpy as np
 import sys
 import pyqtgraph as pg
 from PyQt5 import QtWidgets
-
+import flags as flag
+import waypoints as wp
 
 
 
@@ -38,18 +39,19 @@ view.show()
 
 
 
-p6 = win.addPlot(title="Updating plot")
-curve = p6.plot(pen='g')
+p1 = win.addPlot(title="Visualize plot")
+curve = p1.plot(pen=flag.color)
+print(wp.data)
 data = np.random.normal(size=(10,1000))
 ptr = 0
-def update():
-    global curve, data, ptr, p6
-    curve.setData(data[ptr%10])
+def update_graph():
+    global curve, data, ptr, p1
+    curve.setData(wp.data)
     if ptr == 0:
-        p6.enableAutoRange('xy', False)  ## stop auto-scaling after the first data set is plotted
+        p1.enableAutoRange('xy', False)  ## stop auto-scaling after the first data set is plotted
     ptr += 1
 timer = QtCore.QTimer()
-timer.timeout.connect(update)
+timer.timeout.connect(update_graph)
 timer.start(50)
 
 
