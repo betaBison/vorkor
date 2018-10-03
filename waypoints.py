@@ -3,7 +3,8 @@
 import numpy as np
 
 
-data = np.array([2,1],
+overall = np.array([2,1],
                 [3,4],
                 [2,3])
-print(data)
+
+data = 

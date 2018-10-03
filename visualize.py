@@ -41,8 +41,7 @@ view.show()
 
 p1 = win.addPlot(title="Visualize plot")
 curve = p1.plot(pen=flag.color)
-print(wp.data)
-data = np.random.normal(size=(10,1000))
+#data = np.random.normal(size=(10,1000))
 ptr = 0
 def update_graph():
     global curve, data, ptr, p1
