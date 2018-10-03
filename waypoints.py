@@ -3,8 +3,8 @@
 import numpy as np
 
 
-overall = np.array([2,1],
-                [3,4],
-                [2,3])
+data = np.array([[2.0,1.0,0.0],
+                [3.0,4.0,5.0],
+                [2.0,3.0,2.0]])
 
-data = 
+
