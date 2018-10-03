@@ -29,12 +29,12 @@ w.addItem(g)
 ##  First example is a set of points with pxMode=False
 ##  These demonstrate the ability to have points with real size down to a very small scale 
 ## 
-pos1 = wp.data[current_waypoint]
-size1 = 0.5   
-color1 = (1.0, 0.0, 0.0, 0.5)
+pos1 = np.array([wp.data[current_waypoint]])
+size1 = np.array([0.5]])   
+color1 = np.array([1.0, 0.0, 0.0, 0.5]])
 
 
-sp1 = gl.GLScatterPlotItem(pos=(1,4,3), size=size1, color=color1, pxMode=False)
+sp1 = gl.GLScatterPlotItem(pos=pos1, size=size1, color=color1, pxMode=False)
 w.addItem(sp1)
 
 def update():
