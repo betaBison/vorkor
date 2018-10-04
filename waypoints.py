@@ -2,9 +2,11 @@
 
 import numpy as np
 
+data = np.empty((100,3))
+data[:,0] = np.linspace(0,9.9,100)
+data[:,1] = 10*np.sin(data[:,0])
+data[:,2] = 5*np.cos(data[:,0])
+print(data)
 
-data = np.array([[2.0,1.0,0.0],
-                [3.0,4.0,5.0],
-                [2.0,3.0,2.0]])
 
 
