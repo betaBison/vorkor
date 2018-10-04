@@ -1,7 +1,6 @@
 # Visualization in 3 dimensions
 
 
-
 from pyqtgraph.Qt import QtCore, QtGui
 import pyqtgraph.opengl as gl
 import numpy as np
@@ -33,7 +32,7 @@ w.addItem(xygrid)
 for i in range(10):
     circle_pts = drawCircle(0,0,0,i)
     color2 = np.array([[0.0,1.0,0.0,1.0]])
-    new_circle = gl.GLLinePlotItem(pos=circle_pts, color=color2, width=10, antialias=True)
+    new_circle = gl.GLLinePlotItem(pos=circle_pts, color=color2, width=5.0, antialias=True,mode='line_strip')
     w.addItem(new_circle)
 
 ##

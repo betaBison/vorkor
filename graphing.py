@@ -11,9 +11,8 @@ def drawCircle(x0,y0,z0,radius):
     pts[N/2:N+1,1] = y0 - np.sqrt(radius**2 - (pts[N/2:N+1,0]-x0)**2)    
     pts[:,2] = z0
     return pts
-'''
-something = circle(0,0,0,4)
+
+something = drawCircle(0,0,0,4)
 print(something)
 plt.plot(something[:,0],something[:,1])
 plt.show()
-'''
