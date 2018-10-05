@@ -25,14 +25,14 @@ w.show()
 w.setBackgroundColor('k')
 
 # add xygrid
-xygrid = gl.GLGridItem(color = 'k')
-w.addItem(xygrid)
+#xygrid = gl.GLGridItem(color = 'k')
+#w.addItem(xygrid)
 
-# add circle radius
-for i in range(10):
+# add circle radii
+for i in range(1,11):
     circle_pts = drawCircle(0,0,0,i)
-    color2 = np.array([[0.0,1.0,0.0,1.0]])
-    new_circle = gl.GLLinePlotItem(pos=circle_pts, color=color2, width=5.0, antialias=True,mode='line_strip')
+    color2 = pg.glColor('w')
+    new_circle = gl.GLLinePlotItem(pos=circle_pts, color=color2, width=0.5, antialias=True,mode='line_strip')
     w.addItem(new_circle)
 
 ##
@@ -41,7 +41,7 @@ for i in range(10):
 ## 
 pos1 = np.array([wp.data[current_waypoint]])
 size1 = np.array([[0.5]])   
-color1 = np.array([[1.0, 0.1, 0.1, 1.0]])
+color1 = pg.glColor('r')
 sp1 = gl.GLScatterPlotItem(pos=pos1, size=size1, color=color1, pxMode=False)
 w.addItem(sp1)
 

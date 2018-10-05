@@ -12,7 +12,9 @@ def drawCircle(x0,y0,z0,radius):
     pts[:,2] = z0
     return pts
 
+'''
 something = drawCircle(0,0,0,4)
 print(something)
 plt.plot(something[:,0],something[:,1])
 plt.show()
+'''
