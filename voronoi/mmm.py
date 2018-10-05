@@ -9,7 +9,7 @@ class QuadPlot(QtCore.QThread):
         QtCore.QThread.__init__(self)
         self.app = QtGui.QApplication([])
         self.w = gl.GLViewWidget()
-        self.w.opts['distance'] = 200
+        self.w.opts['distance'] = 20
         self.w.show()
         self.w.setWindowTitle('Quadcopter Simulation')
 
