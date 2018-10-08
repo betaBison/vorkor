@@ -8,6 +8,9 @@ import sys
 import pyqtgraph as pg
 from PyQt5 import QtWidgets
 from graphing import drawCircle
+from graphing import rand_pos
+from graphing import rand_vel
+from graphing import rand_initial
 # added Modules
 import flags as flag
 import waypoints as wp
@@ -15,6 +18,7 @@ from intruder_v1 import intruder
 # Variables
 global current_waypoint, pos1, sp1
 step = 0
+
 
 
 pg.setConfigOptions(antialias=True)
@@ -37,8 +41,8 @@ for i in range(1,6):
     w.addItem(new_circle)
 
 # add radial lines
-for j in range(0,24):
-    angle = j*2*np.pi/24.0
+for j in range(0,20):
+    angle = j*2*np.pi/20.0
     rad_line_pts = xaxis_pts = np.array([[0.0,0.0,0.0],
                                          [1.1*flag.dr*np.cos(angle),1.1*flag.dr*np.sin(angle),0.0]])
     rad_line = gl.GLLinePlotItem(pos=rad_line_pts,color=pg.glColor('w'),width=0.1,antialias=True)
@@ -60,7 +64,8 @@ w.addItem(zaxis)
 
 
 # Initialize and import paths of intruder aircraft
-intruder_1 = intruder([300,800,500],[-100,-300,-20])
+position,velocity = rand_initial()
+intruder_1 = intruder(position,velocity)
 intruder_1_pts = intruder_1.waypoints()
 md = gl.MeshData.sphere(rows=100, cols=100, radius=50)
 intruder_1_3d = gl.GLMeshItem(meshdata=md, smooth=False, drawFaces=True, drawEdges=True, edgeColor=(0,1,1,1), color=(0,1,1,1) )
@@ -87,6 +92,7 @@ w.addItem(sp1)
 
 
 
+
 def update():
     global step
     global pos1, sp1
@@ -107,9 +113,11 @@ def update():
     #print(wp.data[current_waypoint])
     pos1 = np.array([wp.data[step]])
     sp1.setData(pos=pos1)
+    #print(rand_pos())
 t = QtCore.QTimer()
 t.timeout.connect(update)
 t.start(flag.dt*1000)
+
 
 
 ## Start Qt event loop unless running in interactive mode.
