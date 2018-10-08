@@ -50,14 +50,24 @@ zaxis_pts = np.array([[0.0,0.0,0.0],
 zaxis = gl.GLLinePlotItem(pos=zaxis_pts,color=pg.glColor('b'),width=0.5)
 w.addItem(zaxis)
 
+# add radial lines
+for j in range(0,24):
+    angle = j*2*np.pi/24.0
+    rad_line_pts = xaxis_pts = np.array([[0.0,0.0,0.0],
+                                         [1.1*flag.dr*np.cos(angle),1.1*flag.dr*np.sin(angle),0.0]])
+    rad_line = gl.GLLinePlotItem(pos=rad_line_pts,color=pg.glColor('w'),width=.5)
+    w.addItem(rad_line)
+
+
 # Initialize and import paths of intruder aircraft
-intruder_1 = intruder([0,0,0],[100,0,0])
+intruder_1 = intruder([300,800,500],[-100,-300,-200])
 intruder_1_pts = intruder_1.waypoints()
 md = gl.MeshData.sphere(rows=100, cols=100, radius=50)
 intruder_1_3d = gl.GLMeshItem(meshdata=md, smooth=False, drawFaces=True, drawEdges=True, edgeColor=(0,1,1,1), color=(0,1,1,1) )
 w.addItem(intruder_1_3d)
 intruder_1_p0 = intruder_1.position
 intruder_1_3d.translate(intruder_1_p0[0],intruder_1_p0[1],intruder_1_p0[2])
+
 
 
 
@@ -79,13 +89,21 @@ w.addItem(sp1)
 
 def update():
     global step
-    global pos1, sp1, intruder_1_pts
+    global pos1, sp1
+    global intruder_1_pts, intruder_1_3d
     if step < (len(wp.data)-1):
         step += 1
         body.translate(-10,0,0)
+        intruder_1_3d.translate(intruder_1_pts[step,0]-intruder_1_pts[step-1,0],
+                                intruder_1_pts[step,1]-intruder_1_pts[step-1,1],
+                                intruder_1_pts[step,2]-intruder_1_pts[step-1,2])
     else:
+        body.translate(2000,0,0)
+        intruder_1_3d.translate(intruder_1_pts[0,0]-intruder_1_pts[step,0],
+                                intruder_1_pts[0,1]-intruder_1_pts[step,1],
+                                intruder_1_pts[0,2]-intruder_1_pts[step,2])
         step = 0
-        body.translate(1000,0,0)
+    print(step)
     #print(wp.data[current_waypoint])
     pos1 = np.array([wp.data[step]])
     sp1.setData(pos=pos1)
