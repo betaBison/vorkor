@@ -3,10 +3,10 @@
 import numpy as np
 
 data = np.empty((100,3))
-data[:,0] = np.linspace(0,9.9,100)
-data[:,1] = 3*np.sin(data[:,0])
+data[:,0] = np.linspace(0,990,100)
+data[:,1] = 300*np.sin(data[:,0]/100)
 #data[:,2] = 5*np.cos(data[:,0])
-data[:,2] = 4.0
+data[:,2] = 400
 #print(data)
 
 
