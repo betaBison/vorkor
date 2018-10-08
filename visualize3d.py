@@ -33,34 +33,34 @@ w.setBackgroundColor('k')
 for i in range(1,6):
     circle_pts = drawCircle(0,0,0,i*flag.dr/5)
     color2 = pg.glColor('w')
-    new_circle = gl.GLLinePlotItem(pos=circle_pts, color=color2, width=0.5, antialias=True,mode='line_strip')
+    new_circle = gl.GLLinePlotItem(pos=circle_pts, color=color2, width=0.1, antialias=True)
     w.addItem(new_circle)
-
-# add all three axis
-xaxis_pts = np.array([[0.0,0.0,0.0],
-                 [1.1*flag.dr,0.0,0.0]])
-xaxis = gl.GLLinePlotItem(pos=xaxis_pts,color=pg.glColor('r'),width=0.5)
-w.addItem(xaxis)
-yaxis_pts = np.array([[0.0,0.0,0.0],
-                 [0.0,1.1*flag.dr,0.0]])
-yaxis = gl.GLLinePlotItem(pos=yaxis_pts,color=pg.glColor('g'),width=0.5)
-w.addItem(yaxis)
-zaxis_pts = np.array([[0.0,0.0,0.0],
-                 [0.0,0.0,1.1*flag.dr]])
-zaxis = gl.GLLinePlotItem(pos=zaxis_pts,color=pg.glColor('b'),width=0.5)
-w.addItem(zaxis)
 
 # add radial lines
 for j in range(0,24):
     angle = j*2*np.pi/24.0
     rad_line_pts = xaxis_pts = np.array([[0.0,0.0,0.0],
                                          [1.1*flag.dr*np.cos(angle),1.1*flag.dr*np.sin(angle),0.0]])
-    rad_line = gl.GLLinePlotItem(pos=rad_line_pts,color=pg.glColor('w'),width=.5)
+    rad_line = gl.GLLinePlotItem(pos=rad_line_pts,color=pg.glColor('w'),width=0.1,antialias=True)
     w.addItem(rad_line)
+
+# add all three axis
+xaxis_pts = np.array([[0.0,0.0,0.0],
+                 [1.1*flag.dr,0.0,0.0]])
+xaxis = gl.GLLinePlotItem(pos=xaxis_pts,color=pg.glColor('r'),width=3.0)
+w.addItem(xaxis)
+yaxis_pts = np.array([[0.0,0.0,0.0],
+                 [0.0,-1.1*flag.dr,0.0]])
+yaxis = gl.GLLinePlotItem(pos=yaxis_pts,color=pg.glColor('g'),width=3.0)
+w.addItem(yaxis)
+zaxis_pts = np.array([[0.0,0.0,0.0],
+                 [0.0,0.0,-1.1*flag.dr]])
+zaxis = gl.GLLinePlotItem(pos=zaxis_pts,color=pg.glColor('b'),width=3.0)
+w.addItem(zaxis)
 
 
 # Initialize and import paths of intruder aircraft
-intruder_1 = intruder([300,800,500],[-100,-300,-200])
+intruder_1 = intruder([300,800,500],[-100,-300,-20])
 intruder_1_pts = intruder_1.waypoints()
 md = gl.MeshData.sphere(rows=100, cols=100, radius=50)
 intruder_1_3d = gl.GLMeshItem(meshdata=md, smooth=False, drawFaces=True, drawEdges=True, edgeColor=(0,1,1,1), color=(0,1,1,1) )
@@ -103,7 +103,7 @@ def update():
                                 intruder_1_pts[0,1]-intruder_1_pts[step,1],
                                 intruder_1_pts[0,2]-intruder_1_pts[step,2])
         step = 0
-    print(step)
+    #print(step)
     #print(wp.data[current_waypoint])
     pos1 = np.array([wp.data[step]])
     sp1.setData(pos=pos1)
