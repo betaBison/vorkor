@@ -31,10 +31,6 @@ w.opts['distance'] = 2000
 w.show()
 w.setBackgroundColor('k')
 
-# add xygrid
-#xygrid = gl.GLGridItem(color = 'k')
-#w.addItem(xygrid)
-
 # add circle radii
 for i in range(1,6):
     circle_pts = drawCircle(0,0,0,i*flag.dr/5)
@@ -86,41 +82,53 @@ body.translate(1000,0,400)
 
 # Ownship
 own_pts = wp.data
-print(own_pts)
-sphere_object = gl.MeshData.sphere(rows=100, cols=100, radius=5.0)
-own_3d = gl.GLMeshItem(meshdata=sphere_object, smooth=True, drawFaces=True, drawEdges=False, color=(1,0,0,1))
-w.addItem(own_3d)
-own_3d.translate(own_pts[0,0],own_pts[0,1],own_pts[0,2])
+own_3d = np.empty(5,dtype=object)
+sphere_object = gl.MeshData.sphere(rows=100, cols=100, radius=10.0)
+cyl_length = 20.0
+cyl_object = gl.MeshData.cylinder(rows=100,cols=100,radius=[5.0,5.0],length=20.0)
+rotate_angle = 45
+for l in range(5):
+    if l == 0:
+        own_3d[l] = gl.GLMeshItem(meshdata=sphere_object, smooth=True, drawFaces=True, drawEdges=False, color=(1,0,0,1))
+    else:
+        own_3d[l] = gl.GLMeshItem(meshdata=cyl_object, smooth=True, drawFaces=True, drawEdges=False, color=(1,0,0,1))
+        own_3d[l].rotate(90,1,0,0)
+        own_3d[l].rotate(rotate_angle,0,0,1)
+        rotate_angle += 90
+    w.addItem(own_3d[l])
+    own_3d[l].translate(own_pts[0,0],own_pts[0,1],own_pts[0,2])
+
+# Ownship
 
 
 
 
 def update():
     global step
-    global pos1, sp1
-    if step < (flag.N):
+    if step < (flag.N-1):
         step += 1
-        own_3d.translate(own_pts[step,0]-own_pts[step-1,0],
-                         own_pts[step,1]-own_pts[step-1,1],
-                         own_pts[step,2]-own_pts[step-1,2])
+        '''
+        for k in range(5):
+            own_3d[k].translate(own_pts[step,0]-own_pts[step-1,0],
+                            own_pts[step,1]-own_pts[step-1,1],
+                            own_pts[step,2]-own_pts[step-1,2])
+        '''
         for k in range(flag.itr_num):
             itr_3d[k].translate(itr_pts[step,0,k]-itr_pts[step-1,0,k],
                                 itr_pts[step,1,k]-itr_pts[step-1,1,k],
                                 itr_pts[step,2,k]-itr_pts[step-1,2,k])
     else:
-        own_3d.translate(own_pts[0,0]-own_pts[step,0],
-                         own_pts[0,1]-own_pts[step,1],
-                         own_pts[0,2]-own_pts[step,2])
+        '''
+        for k in range(5):
+            own_3d[k].translate(own_pts[0,0]-own_pts[step,0],
+                            own_pts[0,1]-own_pts[step,1],
+                            own_pts[0,2]-own_pts[step,2])
+        '''
         for k in range(flag.itr_num):
             itr_3d[k].translate(itr_pts[0,0,k]-itr_pts[step,0,k],
                                 itr_pts[0,1,k]-itr_pts[step,1,k],
                                 itr_pts[0,2,k]-itr_pts[step,2,k])
         step = 0
-    #print(step)
-    #print(wp.data[current_waypoint])
-    pos1 = np.array([wp.data[step]])
-    sp1.setData(pos=pos1)
-    #print(rand_pos())
 t = QtCore.QTimer()
 t.timeout.connect(update)
 t.start(flag.dt*1000)
