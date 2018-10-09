@@ -9,16 +9,16 @@ import numpy as np
 import sys
 import pyqtgraph as pg
 from PyQt5 import QtWidgets
+from math import *
+# added Modules
 from graphing import drawCircle
 from graphing import rand_pos
 from graphing import rand_vel
 from graphing import rand_initial
-# added Modules
 import flags as flag
 import waypoints as wp
 from intruder_v1 import intruder
 # Variables
-global current_waypoint, pos1, sp1
 step = 0
 
 
@@ -101,20 +101,28 @@ for l in range(5):
         rotate_angle += 90
     w.addItem(own_3d[l])
     own_3d[l].translate(own_pts[0,0],own_pts[0,1],own_pts[0,2])
+# initial orientation
+own_rotate = np.array([0,1,0])
 
-# Ownship
 
 
 
 
 def update():
-    global step
+    global step, own_rotate
     if step < (flag.N-1):
         step += 1
         for k in range(5):
-            own_3d[k].translate(own_pts[step,0]-own_pts[step-1,0],
-                            own_pts[step,1]-own_pts[step-1,1],
-                            own_pts[step,2]-own_pts[step-1,2])
+            dx = own_pts[step,0]-own_pts[step-1,0]
+            dy = own_pts[step,1]-own_pts[step-1,1]
+            dz = own_pts[step,2]-own_pts[step-1,2]
+            # translate object
+            own_3d[k].translate(dx,dy,dz)
+            # rotate object in direction of where it came from
+            new_u = [dx/sqrt(dx**2+dy**2+dz**2),dy/sqrt(dx**2+dy**2+dz**2),dz/sqrt(dx**2+dy**2+dz**2)]
+            #own_3d[k].rotate(angle_x,1,0,0)
+            #own_3d[k].rotate(angle_y,0,1,0)
+            #own_3d[k].rotate(angle_z,0,0,1)
         for k in range(flag.itr_num):
             itr_3d[k].translate(itr_pts[step,0,k]-itr_pts[step-1,0,k],
                                 itr_pts[step,1,k]-itr_pts[step-1,1,k],
