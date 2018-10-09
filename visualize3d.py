@@ -1,4 +1,6 @@
 # Visualization in 3 dimensions
+# Author: Derek Knowles
+# Date: 10/2/18
 
 
 from pyqtgraph.Qt import QtCore, QtGui
@@ -63,19 +65,18 @@ zaxis = gl.GLLinePlotItem(pos=zaxis_pts,color=pg.glColor('b'),width=3.0)
 w.addItem(zaxis)
 
 
-# Initialize and import paths of intruder aircraft
-position,velocity = rand_initial()
-intruder_1 = intruder(position,velocity)
-intruder_1_pts = intruder_1.waypoints()
-md = gl.MeshData.sphere(rows=100, cols=100, radius=50)
-intruder_1_3d = gl.GLMeshItem(meshdata=md, smooth=False, drawFaces=True, drawEdges=True, edgeColor=(0,1,1,1), color=(0,1,1,1) )
-w.addItem(intruder_1_3d)
-intruder_1_p0 = intruder_1.position
-intruder_1_3d.translate(intruder_1_p0[0],intruder_1_p0[1],intruder_1_p0[2])
-
-
-
-
+# Initialize and import paths of intruder 
+itr_3d = np.empty((flag.itr_num),dtype=object)
+itr_pts = np.empty((flag.N,3,flag.itr_num)) 
+for k in range(flag.itr_num):
+    initial = rand_initial()
+    itr_object = intruder(initial[0,:],initial[1,:])
+    itr_pts[:,:,k] = itr_object.waypoints()
+    sphere_object = gl.MeshData.sphere(rows=100, cols=100, radius=50)    
+    itr_3d[k] = gl.GLMeshItem(meshdata=sphere_object, smooth=False, drawFaces=True, drawEdges=False, color=(0,1.0-float(k)/flag.itr_num,float(k)/flag.itr_num,1) )
+    w.addItem(itr_3d[k])
+    # Translate to initial position
+    itr_3d[k].translate(initial[0,0],initial[0,1],initial[0,2])
 
 # sphere mesh
 md = gl.MeshData.sphere(rows=100, cols=100, radius=50)
@@ -96,18 +97,19 @@ w.addItem(sp1)
 def update():
     global step
     global pos1, sp1
-    global intruder_1_pts, intruder_1_3d
     if step < (len(wp.data)-1):
         step += 1
         body.translate(-10,0,0)
-        intruder_1_3d.translate(intruder_1_pts[step,0]-intruder_1_pts[step-1,0],
-                                intruder_1_pts[step,1]-intruder_1_pts[step-1,1],
-                                intruder_1_pts[step,2]-intruder_1_pts[step-1,2])
+        for k in range(flag.itr_num):
+            itr_3d[k].translate(itr_pts[step,0,k]-itr_pts[step-1,0,k],
+                                itr_pts[step,1,k]-itr_pts[step-1,1,k],
+                                itr_pts[step,2,k]-itr_pts[step-1,2,k],)
     else:
         body.translate(2000,0,0)
-        intruder_1_3d.translate(intruder_1_pts[0,0]-intruder_1_pts[step,0],
-                                intruder_1_pts[0,1]-intruder_1_pts[step,1],
-                                intruder_1_pts[0,2]-intruder_1_pts[step,2])
+        for k in range(flag.itr_num):
+            itr_3d[k].translate(itr_pts[0,0,k]-itr_pts[step,0,k],
+                                itr_pts[0,1,k]-itr_pts[step,1,k],
+                                itr_pts[0,2,k]-itr_pts[step,2,k],)
         step = 0
     #print(step)
     #print(wp.data[current_waypoint])

@@ -46,12 +46,15 @@ def rand_initial():
     # speed
     speed,climb = rand_vel()
     # must point inside the circle
-    theta_min = np.pi/2+angle
-    theta_max = theta_min + np.pi
+    theta_min = np.pi/2+angle+np.pi/4
+    theta_max = theta_min + np.pi/2
     theta = random.uniform(theta_min,theta_max)
     velocity = speed*np.cos(theta),speed*np.sin(theta),climb
-    return pos, velocity
+    initial = np.empty((2,3))
+    initial[0,:] = pos
+    initial[1,:] = velocity
+    return initial
 
 #print(rand_pos())
 #print(rand_vel())
-print(rand_initial())
+#print(rand_initial())
