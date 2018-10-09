@@ -91,7 +91,11 @@ for l in range(5):
     if l == 0:
         own_3d[l] = gl.GLMeshItem(meshdata=sphere_object, smooth=True, drawFaces=True, drawEdges=False, color=(1,0,0,1))
     else:
-        own_3d[l] = gl.GLMeshItem(meshdata=cyl_object, smooth=True, drawFaces=True, drawEdges=False, color=(1,0,0,1))
+        if l <= 2:
+            cyl_color = pg.glColor('r') # front of quad
+        else:
+            cyl_color = pg.glColor('g') # back of quad
+        own_3d[l] = gl.GLMeshItem(meshdata=cyl_object, smooth=True, drawFaces=True, drawEdges=False, color=cyl_color)
         own_3d[l].rotate(90,1,0,0)
         own_3d[l].rotate(rotate_angle,0,0,1)
         rotate_angle += 90
@@ -107,23 +111,19 @@ def update():
     global step
     if step < (flag.N-1):
         step += 1
-        '''
         for k in range(5):
             own_3d[k].translate(own_pts[step,0]-own_pts[step-1,0],
                             own_pts[step,1]-own_pts[step-1,1],
                             own_pts[step,2]-own_pts[step-1,2])
-        '''
         for k in range(flag.itr_num):
             itr_3d[k].translate(itr_pts[step,0,k]-itr_pts[step-1,0,k],
                                 itr_pts[step,1,k]-itr_pts[step-1,1,k],
                                 itr_pts[step,2,k]-itr_pts[step-1,2,k])
     else:
-        '''
         for k in range(5):
             own_3d[k].translate(own_pts[0,0]-own_pts[step,0],
                             own_pts[0,1]-own_pts[step,1],
                             own_pts[0,2]-own_pts[step,2])
-        '''
         for k in range(flag.itr_num):
             itr_3d[k].translate(itr_pts[0,0,k]-itr_pts[step,0,k],
                                 itr_pts[0,1,k]-itr_pts[step,1,k],
