@@ -85,11 +85,12 @@ w.addItem(body)
 body.translate(1000,0,400)
 
 # Ownship
-pos1 = np.array([wp.data[step]])
-size1 = np.array([[50]])   
-color1 = pg.glColor('r')
-sp1 = gl.GLScatterPlotItem(pos=pos1, size=size1, color=(1,0,0,1), pxMode=False)
-w.addItem(sp1)
+own_pts = wp.data
+print(own_pts)
+sphere_object = gl.MeshData.sphere(rows=100, cols=100, radius=5.0)
+own_3d = gl.GLMeshItem(meshdata=sphere_object, smooth=True, drawFaces=True, drawEdges=False, color=(1,0,0,1))
+w.addItem(own_3d)
+own_3d.translate(own_pts[0,0],own_pts[0,1],own_pts[0,2])
 
 
 
@@ -97,19 +98,23 @@ w.addItem(sp1)
 def update():
     global step
     global pos1, sp1
-    if step < (len(wp.data)-1):
+    if step < (flag.N):
         step += 1
-        body.translate(-10,0,0)
+        own_3d.translate(own_pts[step,0]-own_pts[step-1,0],
+                         own_pts[step,1]-own_pts[step-1,1],
+                         own_pts[step,2]-own_pts[step-1,2])
         for k in range(flag.itr_num):
             itr_3d[k].translate(itr_pts[step,0,k]-itr_pts[step-1,0,k],
                                 itr_pts[step,1,k]-itr_pts[step-1,1,k],
-                                itr_pts[step,2,k]-itr_pts[step-1,2,k],)
+                                itr_pts[step,2,k]-itr_pts[step-1,2,k])
     else:
-        body.translate(2000,0,0)
+        own_3d.translate(own_pts[0,0]-own_pts[step,0],
+                         own_pts[0,1]-own_pts[step,1],
+                         own_pts[0,2]-own_pts[step,2])
         for k in range(flag.itr_num):
             itr_3d[k].translate(itr_pts[0,0,k]-itr_pts[step,0,k],
                                 itr_pts[0,1,k]-itr_pts[step,1,k],
-                                itr_pts[0,2,k]-itr_pts[step,2,k],)
+                                itr_pts[0,2,k]-itr_pts[step,2,k])
         step = 0
     #print(step)
     #print(wp.data[current_waypoint])
