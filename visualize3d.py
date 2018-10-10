@@ -52,11 +52,11 @@ xaxis_pts = np.array([[0.0,0.0,0.0],
 xaxis = gl.GLLinePlotItem(pos=xaxis_pts,color=pg.glColor('r'),width=3.0)
 w.addItem(xaxis)
 yaxis_pts = np.array([[0.0,0.0,0.0],
-                 [0.0,-1.1*flag.dr,0.0]])
+                 [0.0,1.1*flag.dr,0.0]])
 yaxis = gl.GLLinePlotItem(pos=yaxis_pts,color=pg.glColor('g'),width=3.0)
 w.addItem(yaxis)
 zaxis_pts = np.array([[0.0,0.0,0.0],
-                 [0.0,0.0,-1.1*flag.dr]])
+                 [0.0,0.0,1.1*flag.dr]])
 zaxis = gl.GLLinePlotItem(pos=zaxis_pts,color=pg.glColor('b'),width=3.0)
 w.addItem(zaxis)
 
@@ -102,7 +102,7 @@ for l in range(5):
     w.addItem(own_3d[l])
     own_3d[l].translate(own_pts[0,0],own_pts[0,1],own_pts[0,2])
 # initial orientation
-own_rotate = np.array([0,1,0])
+own_rotate = np.array([0.0,0.0,0.0])
 
 
 
@@ -112,17 +112,34 @@ def update():
     global step, own_rotate
     if step < (flag.N-1):
         step += 1
+        dx = own_pts[step,0]-own_pts[step-1,0]
+        dy = own_pts[step,1]-own_pts[step-1,1]
+        dz = own_pts[step,2]-own_pts[step-1,2]
+        theta = degrees(atan2(dy,dx))
+        phi = degrees(atan2(dz,dy))
+        psi = degrees(atan2(dz,dx))
+        angle_z = theta - own_rotate[0]
+        angle_x = phi - own_rotate[1]
+        angle_y = psi - own_rotate[2]
         for k in range(5):
-            dx = own_pts[step,0]-own_pts[step-1,0]
-            dy = own_pts[step,1]-own_pts[step-1,1]
-            dz = own_pts[step,2]-own_pts[step-1,2]
-            # translate object
-            own_3d[k].translate(dx,dy,dz)
+            # translate object to origin
+            own_3d[k].translate(-own_pts[step-1,0],
+                                -own_pts[step-1,1],
+                                -own_pts[step-1,2])
             # rotate object in direction of where it came from
-            new_u = [dx/sqrt(dx**2+dy**2+dz**2),dy/sqrt(dx**2+dy**2+dz**2),dz/sqrt(dx**2+dy**2+dz**2)]
+            own_3d[k].rotate(angle_z,0,0,1)
             #own_3d[k].rotate(angle_x,1,0,0)
             #own_3d[k].rotate(angle_y,0,1,0)
-            #own_3d[k].rotate(angle_z,0,0,1)
+            # translate object back to its spot
+            own_3d[k].translate(own_pts[step,0],
+                                own_pts[step,1],
+                                own_pts[step,2])
+            #new_u = [dx/sqrt(dx**2+dy**2+dz**2),dy/sqrt(dx**2+dy**2+dz**2),dz/sqrt(dx**2+dy**2+dz**2)]
+        print(theta)
+        own_rotate[0] = theta
+        print(own_rotate[0])
+        own_rotate[1] = phi
+        own_rotate[2] = psi
         for k in range(flag.itr_num):
             itr_3d[k].translate(itr_pts[step,0,k]-itr_pts[step-1,0,k],
                                 itr_pts[step,1,k]-itr_pts[step-1,1,k],

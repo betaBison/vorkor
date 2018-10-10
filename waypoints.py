@@ -9,7 +9,7 @@ data = np.empty((N,3))
 data[:,0] = np.linspace(0,990,N)
 data[:,1] = 300*np.sin(data[:,0]/65)
 #data[:,2] = 5*np.cos(data[:,0])
-data[:,2] = 400
+data[:,2] = 400 + 150*np.sin(data[:,0]/50)
 #print(data)
 
 
