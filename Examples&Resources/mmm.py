@@ -4,6 +4,7 @@ import numpy as np
 from math import *
 import time
 
+
 class QuadPlot(QtCore.QThread):
     def __init__(self):
         QtCore.QThread.__init__(self)
