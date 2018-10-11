@@ -52,11 +52,11 @@ xaxis_pts = np.array([[0.0,0.0,0.0],
 xaxis = gl.GLLinePlotItem(pos=xaxis_pts,color=pg.glColor('r'),width=3.0)
 w.addItem(xaxis)
 yaxis_pts = np.array([[0.0,0.0,0.0],
-                 [0.0,1.1*flag.dr,0.0]])
+                 [0.0,-1.1*flag.dr,0.0]])
 yaxis = gl.GLLinePlotItem(pos=yaxis_pts,color=pg.glColor('g'),width=3.0)
 w.addItem(yaxis)
 zaxis_pts = np.array([[0.0,0.0,0.0],
-                 [0.0,0.0,1.1*flag.dr]])
+                 [0.0,0.0,-1.1*flag.dr]])
 zaxis = gl.GLLinePlotItem(pos=zaxis_pts,color=pg.glColor('b'),width=3.0)
 w.addItem(zaxis)
 
@@ -73,12 +73,6 @@ for k in range(flag.itr_num):
     w.addItem(itr_3d[k])
     # Translate to initial position
     itr_3d[k].translate(initial[0,0],initial[0,1],initial[0,2])
-
-# sphere mesh
-md = gl.MeshData.sphere(rows=100, cols=100, radius=50)
-body = gl.GLMeshItem(meshdata=md, smooth=False, drawFaces=True, drawEdges=True, edgeColor=(0,0,1,1), color=(0,0,1,1) )
-w.addItem(body)
-body.translate(1000,0,400)
 
 # Ownship
 own_pts = wp.data
@@ -135,9 +129,7 @@ def update():
                                 own_pts[step,1],
                                 own_pts[step,2])
             #new_u = [dx/sqrt(dx**2+dy**2+dz**2),dy/sqrt(dx**2+dy**2+dz**2),dz/sqrt(dx**2+dy**2+dz**2)]
-        print(theta)
         own_rotate[0] = theta
-        print(own_rotate[0])
         own_rotate[1] = phi
         own_rotate[2] = psi
         for k in range(flag.itr_num):
