@@ -79,8 +79,8 @@ class visualization(QtCore.QThread):
             itr_3d[k].translate(initial[0,0],initial[0,1],initial[0,2])
 
         # Ownship
-        own_pts = wp.data
-        own_3d = np.empty(9,dtype=object)
+        self.own_pts = wp.data
+        self.own_3d = np.empty(9,dtype=object)
         sphere_object = gl.MeshData.sphere(rows=100, cols=100, radius=10.0)
         small_sphere = gl.MeshData.sphere(rows=100, cols=100, radius=5.0)
         cyl_length = 20.0
@@ -88,57 +88,55 @@ class visualization(QtCore.QThread):
         rotate_angle = 45
         for l in range(9):
             if l == 0:
-                own_3d[l] = gl.GLMeshItem(meshdata=sphere_object, smooth=True, drawFaces=True, drawEdges=False, color=(1,0,0,1))
+                self.own_3d[l] = gl.GLMeshItem(meshdata=sphere_object, smooth=True, drawFaces=True, drawEdges=False, color=(1,0,0,1))
             elif l < 5:
                 if l <= 2:
                     cyl_color = pg.glColor('r') # front of quad
                 else:
                     cyl_color = pg.glColor('g') # back of quad
-                own_3d[l] = gl.GLMeshItem(meshdata=cyl_object, smooth=True, drawFaces=True, drawEdges=False, color=cyl_color)
-                own_3d[l].rotate(90,1,0,0)
-                own_3d[l].rotate(rotate_angle,0,0,1)
+                self.own_3d[l] = gl.GLMeshItem(meshdata=cyl_object, smooth=True, drawFaces=True, drawEdges=False, color=cyl_color)
+                self.own_3d[l].rotate(90,1,0,0)
+                self.own_3d[l].rotate(rotate_angle,0,0,1)
                 rotate_angle += 90
             else:
                 if l <= 6:
                     cyl_color = pg.glColor('r') # front of quad
                 else:
                     cyl_color = pg.glColor('g') # back of quad
-                own_3d[l] = gl.GLMeshItem(meshdata=small_sphere, smooth=True, drawFaces=True, drawEdges=False, color=cyl_color)
-                own_3d[l].translate(0,0,20.0)
-                own_3d[l].rotate(90,1,0,0)
-                own_3d[l].rotate(rotate_angle,0,0,1)
+                self.own_3d[l] = gl.GLMeshItem(meshdata=small_sphere, smooth=True, drawFaces=True, drawEdges=False, color=cyl_color)
+                self.own_3d[l].translate(0,0,20.0)
+                self.own_3d[l].rotate(90,1,0,0)
+                self.own_3d[l].rotate(rotate_angle,0,0,1)
                 rotate_angle += 90
-            w.addItem(own_3d[l])
-            own_3d[l].translate(own_pts[0,0],own_pts[0,1],own_pts[0,2])
+            w.addItem(self.own_3d[l])
+            self.own_3d[l].translate(own_pts[0,0],own_pts[0,1],own_pts[0,2])
         
 
         
-
-
 
     def update(self):
-        if step < (flag.N-1):
-            step += 1
-            dx = own_pts[step,0]-own_pts[step-1,0]
-            dy = own_pts[step,1]-own_pts[step-1,1]
-            dz = own_pts[step,2]-own_pts[step-1,2]
+        if self.step < (flag.N-1):
+            self.step += 1
+            dx = self.own_pts[step,0]-self.own_pts[step-1,0]
+            dy = self.own_pts[step,1]-self.own_pts[step-1,1]
+            dz = self.own_pts[step,2]-self.own_pts[step-1,2]
             theta = degrees(atan2(dy,dx))
             phi = degrees(atan2(dz,dy))
             psi = degrees(atan2(dz,dx))
-            angle_z = theta - own_rotate[0]
-            angle_x = phi - own_rotate[1]
-            angle_y = psi - own_rotate[2]
+            angle_z = theta - self.own_rotate[0]
+            angle_x = phi - self.own_rotate[1]
+            angle_y = psi - self.own_rotate[2]
             for k in range(9):
                 # translate object to origin
-                own_3d[k].translate(-own_pts[step-1,0],
-                                    -own_pts[step-1,1],
-                                    -own_pts[step-1,2])
+                self.own_3d[k].translate(-self.own_pts[step-1,0],
+                                    -self.own_pts[step-1,1],
+                                    -self.own_pts[step-1,2])
                 # rotate object in direction of where it came from
-                own_3d[k].rotate(angle_z,0,0,1)
-                #own_3d[k].rotate(angle_x,1,0,0)
-                #own_3d[k].rotate(angle_y,0,1,0)
+                self.own_3d[k].rotate(angle_z,0,0,1)
+                #self.own_3d[k].rotate(angle_x,1,0,0)
+                #self.own_3d[k].rotate(angle_y,0,1,0)
                 # translate object back to its spot
-                own_3d[k].translate(own_pts[step,0],
+                self.own_3d[k].translate(own_pts[step,0],
                                     own_pts[step,1],
                                     own_pts[step,2])
                 #new_u = [dx/sqrt(dx**2+dy**2+dz**2),dy/sqrt(dx**2+dy**2+dz**2),dz/sqrt(dx**2+dy**2+dz**2)]
@@ -151,7 +149,7 @@ class visualization(QtCore.QThread):
                                     itr_pts[step,2,k]-itr_pts[step-1,2,k])
         else:
             for k in range(9):
-                own_3d[k].translate(own_pts[0,0]-own_pts[step,0],
+                self.own_3d[k].translate(own_pts[0,0]-own_pts[step,0],
                                 own_pts[0,1]-own_pts[step,1],
                                 own_pts[0,2]-own_pts[step,2])
             for k in range(self.num_intruders):
