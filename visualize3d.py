@@ -10,7 +10,6 @@ import sys
 import pyqtgraph as pg
 from PyQt5 import QtWidgets
 from math import *
-import time
 # added Modules
 from graphing import drawCircle
 from graphing import rand_pos
@@ -37,6 +36,7 @@ class visualization(QtCore.QThread):
         self.w.opts['distance'] = 2000
         self.w.show()
         self.w.setBackgroundColor('k')
+
 
         # add circle radii
         for i in range(1,6):
@@ -114,10 +114,17 @@ class visualization(QtCore.QThread):
             self.w.addItem(self.own_3d[l])
             self.own_3d[l].translate(self.own_pts[0,0],self.own_pts[0,1],self.own_pts[0,2])
         
-
+        '''
+        # timing
+        status_update_timer = QtCore.QTimer(self)
+        status_update_timer.setSingleShot(False)
+        status_update_timer.timeout.connect(lambda: self.update_graph())
+        status_update_timer.start(5000)
+        '''
         
 
-    def update(self):
+    def update_graph(self):
+        #print("updating")
         if self.step < (flag.N-1):
             self.step += 1
             dx = self.own_pts[self.step,0]-self.own_pts[self.step-1,0]
@@ -161,9 +168,8 @@ class visualization(QtCore.QThread):
                                     self.itr_pts[0,2,k]-self.itr_pts[self.step,2,k])
             self.step = 0
 
-        self.w.show()
         self.app.processEvents()
-        time.sleep(0.01)
+        
 
 
 
