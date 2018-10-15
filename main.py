@@ -4,7 +4,7 @@ from visualize3d import visualization
 
 
 def main():
-
+    # visualization("short" or "long", # intruders)
     graph = visualization("short",12)
 
     while(1):

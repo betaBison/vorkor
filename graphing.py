@@ -15,19 +15,12 @@ def drawCircle(x0,y0,z0,radius):
     pts[:,2] = z0
     return pts
 
-'''
-something = drawCircle(0,0,0,4)
-print(something)
-plt.plot(something[:,0],something[:,1])
-plt.show()
-'''
-
-def rand_pos():
+def rand_pos(self):
     # creates a randomized position around the circle
     # p118 "one of twenty possible positions"
     angle = random.randrange(0,360,18)
     angle = angle*np.pi/180.0
-    pos = flag.dr*np.cos(angle),flag.dr*np.sin(angle),400
+    pos = self.dr*np.cos(angle),self.dr*np.sin(angle),400
     return pos
 
 def rand_vel():
@@ -38,11 +31,11 @@ def rand_vel():
     climb = random.uniform(-2.6,2.6)
     return speed,climb
 
-def rand_initial():
+def rand_initial(self):
     # position
     angle = random.randrange(0,360,18)
     angle = angle*np.pi/180.0
-    pos = flag.dr*np.cos(angle),flag.dr*np.sin(angle),400
+    pos = self.dr*np.cos(angle),self.dr*np.sin(angle),400
     # speed
     speed,climb = rand_vel()
     # must point inside the circle

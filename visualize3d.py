@@ -11,10 +11,7 @@ import pyqtgraph as pg
 from PyQt5 import QtWidgets
 from math import *
 # added Modules
-from graphing import drawCircle
-from graphing import rand_pos
-from graphing import rand_vel
-from graphing import rand_initial
+from graphing import *
 import flags as flag
 import waypoints as wp
 from intruder_v1 import intruder
@@ -23,9 +20,14 @@ import time
 class visualization(QtCore.QThread):
     def __init__(self,type,num_intruders):
         QtCore.QThread.__init__(self)
-
         self.type = type
         self.num_intruders = num_intruders
+        if type == "long":
+            self.dr = flag.dr_long
+        elif type == "short":
+            self.dr = flag.dr_short
+        else:
+            print("invalid simulation type")
         self.step = 0
         self.own_rotate = np.array([0.0,0.0,0.0])       #initial orientation
         #QtCore.QThread.__init__(self)
@@ -34,14 +36,14 @@ class visualization(QtCore.QThread):
         self.app = QtGui.QApplication([])        
         self.w = gl.GLViewWidget()
         self.w.setWindowTitle('pyqtgraph example: GLScatterPlotItem')
-        self.w.opts['distance'] = 2000
+        self.w.opts['distance'] = 2*self.dr
         self.w.show()
         self.w.setBackgroundColor('k')
 
 
         # add circle radii
         for i in range(1,6):
-            circle_pts = drawCircle(0,0,0,i*flag.dr/5)
+            circle_pts = drawCircle(0,0,0,i*self.dr/5)
             color2 = pg.glColor('w')
             new_circle = gl.GLLinePlotItem(pos=circle_pts, color=color2, width=0.1, antialias=True)
             self.w.addItem(new_circle)
@@ -50,21 +52,21 @@ class visualization(QtCore.QThread):
         for j in range(0,20):
             angle = j*2*np.pi/20.0
             rad_line_pts = xaxis_pts = np.array([[0.0,0.0,0.0],
-                                                [1.1*flag.dr*np.cos(angle),1.1*flag.dr*np.sin(angle),0.0]])
+                                                [1.1*self.dr*np.cos(angle),1.1*self.dr*np.sin(angle),0.0]])
             rad_line = gl.GLLinePlotItem(pos=rad_line_pts,color=pg.glColor('w'),width=0.1,antialias=True)
             self.w.addItem(rad_line)
 
         # add all three axis
         xaxis_pts = np.array([[0.0,0.0,0.0],
-                        [1.1*flag.dr,0.0,0.0]])
+                        [1.1*self.dr,0.0,0.0]])
         xaxis = gl.GLLinePlotItem(pos=xaxis_pts,color=pg.glColor('r'),width=3.0)
         self.w.addItem(xaxis)
         yaxis_pts = np.array([[0.0,0.0,0.0],
-                        [0.0,-1.1*flag.dr,0.0]])
+                        [0.0,-1.1*self.dr,0.0]])
         yaxis = gl.GLLinePlotItem(pos=yaxis_pts,color=pg.glColor('g'),width=3.0)
         self.w.addItem(yaxis)
         zaxis_pts = np.array([[0.0,0.0,0.0],
-                        [0.0,0.0,-1.1*flag.dr]])
+                        [0.0,0.0,-1.1*self.dr]])
         zaxis = gl.GLLinePlotItem(pos=zaxis_pts,color=pg.glColor('b'),width=3.0)
         self.w.addItem(zaxis)
 
@@ -73,7 +75,7 @@ class visualization(QtCore.QThread):
         self.itr_3d = np.empty((self.num_intruders),dtype=object)
         self.itr_pts = np.empty((flag.N,3,self.num_intruders)) 
         for k in range(self.num_intruders):
-            initial = rand_initial()
+            initial = rand_initial(self)
             itr_object = intruder(initial[0,:],initial[1,:])
             self.itr_pts[:,:,k] = itr_object.waypoints()
             sphere_object = gl.MeshData.sphere(rows=100, cols=100, radius=50)    
