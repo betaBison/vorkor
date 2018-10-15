@@ -18,6 +18,7 @@ from graphing import rand_initial
 import flags as flag
 import waypoints as wp
 from intruder_v1 import intruder
+import time
 
 class visualization(QtCore.QThread):
     def __init__(self,type,num_intruders):
@@ -124,7 +125,7 @@ class visualization(QtCore.QThread):
         
 
     def update_graph(self):
-        #print("updating")
+        time0 = time.clock()
         if self.step < (flag.N-1):
             self.step += 1
             dx = self.own_pts[self.step,0]-self.own_pts[self.step-1,0]
@@ -169,6 +170,12 @@ class visualization(QtCore.QThread):
             self.step = 0
 
         self.app.processEvents()
+        time1 = time.clock()
+        elapsed_time = time1-time0
+        if elapsed_time < flag.dt:
+            time.sleep(flag.dt-elapsed_time)
+        time2 = time.clock()
+        print(time2-time0)
         
 
 
