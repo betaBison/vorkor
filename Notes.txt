@@ -11,15 +11,20 @@ class ownship (min radius, parameters)
 
 
 keep code organized and relevant
-simplify code by running main function that calls how many intruders
-
-create "shadow" of previous locations
+#simplify code by running main function that calls how many intruders
 #create function for random position
 #create function for random velocity
+#add mesh of drone
+#set ownship initial position and velocity
+#eliminate duplicate intruders on each position
+
+
+
+create "shadow" of previous locations
 create collision volume
 create self-separation volume
 create functionality alerting if any volumes interfered
-#add mesh of drone
+
 add mesh of intruder vehicles
 add various colors for intruders
 	

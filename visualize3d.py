@@ -25,10 +25,23 @@ class visualization(QtCore.QThread):
         self.num_intruders = num_intruders
         if self.num_intruders > 20:
             print("Warning: number of intruders exceeds limit")
+            print("Must be <= 20 intruders")
         if type == "long":
             self.dr = flag.dr_long
+            self.dth = flag.dth_long
+            self.hth = flag.hth_long
+            self.dsep = flag.dsep_long
+            self.hsep = flag.hsep_long
+            self.dcol = flag.dcol_long
+            self.hcol = flag.hcol_long
         elif type == "short":
             self.dr = flag.dr_short
+            self.dth = flag.dth_short
+            self.hth = flag.hth_short
+            self.dsep = flag.dsep_short
+            self.hsep = flag.hsep_short
+            self.dcol = flag.dcol_short
+            self.hcol = flag.hcol_short
         else:
             print("invalid simulation type")
         self.step = 0
@@ -78,9 +91,16 @@ class visualization(QtCore.QThread):
         self.itr_3d = np.empty((self.num_intruders),dtype=object)
         self.itr_pts = np.empty((flag.N,3,self.num_intruders)) 
         for k in range(self.num_intruders):
-            for m in range(k,0,-1):
-                print(m)
-            initial = rand_initial(self)
+            duplicate_flag = True
+            while duplicate_flag == True:
+                duplicate_flag = False
+                initial = rand_initial(self)
+                for m in range(k,-1,-1):
+                    if np.all(initial[0,:] == self.itr_pts[0,:,m]):
+                        #print("duplicate found")
+                        #print(initial[0,:],self.itr_pts[0,:,m])
+                        duplicate_flag = True
+                        break
             itr_object = intruder(initial[0,:],initial[1,:])
             self.itr_pts[:,:,k] = itr_object.waypoints()
             sphere_object = gl.MeshData.sphere(rows=100, cols=100, radius=50)    
@@ -91,8 +111,9 @@ class visualization(QtCore.QThread):
 
         # Ownship
         ownship1 = ownship()
+        own_items = 11 # number of meshes that make up ownship
         self.own_pts = ownship1.waypoints()
-        self.own_3d = np.empty(9,dtype=object)
+        self.own_3d = np.empty(own_items,dtype=object)
         sphere_object = gl.MeshData.sphere(rows=100, cols=100, radius=10.0)
         small_sphere = gl.MeshData.sphere(rows=100, cols=100, radius=5.0)
         cyl_length = 20.0
@@ -122,6 +143,15 @@ class visualization(QtCore.QThread):
                 rotate_angle += 90
             self.w.addItem(self.own_3d[l])
             self.own_3d[l].translate(self.own_pts[0,0],self.own_pts[0,1],self.own_pts[0,2])
+        for l in range(9,own_items+1):
+            if l = 9:
+                pass
+            '''    
+            cyl_object = gl.MeshData.cylinder(rows=100,cols=100,radius=[5.0,5.0],length=20.0)
+            self.own_3d[l] = gl.GLMeshItem(meshdata=small_sphere, smooth=True, drawFaces=True, drawEdges=False, color=cyl_color)
+            self.w.addItem(self.own_3d[l])
+            self.own_3d[l].translate(self.own_pts[0,0],self.own_pts[0,1],self.own_pts[0,2])
+            '''
         
         '''
         # timing
