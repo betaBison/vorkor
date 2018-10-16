@@ -111,9 +111,9 @@ class visualization(QtCore.QThread):
 
         # Ownship
         ownship1 = ownship()
-        own_items = 11 # number of meshes that make up ownship
+        self.own_items = 12 # number of meshes that make up ownship
         self.own_pts = ownship1.waypoints()
-        self.own_3d = np.empty(own_items,dtype=object)
+        self.own_3d = np.empty(self.own_items,dtype=object)
         sphere_object = gl.MeshData.sphere(rows=100, cols=100, radius=10.0)
         small_sphere = gl.MeshData.sphere(rows=100, cols=100, radius=5.0)
         cyl_length = 20.0
@@ -143,15 +143,34 @@ class visualization(QtCore.QThread):
                 rotate_angle += 90
             self.w.addItem(self.own_3d[l])
             self.own_3d[l].translate(self.own_pts[0,0],self.own_pts[0,1],self.own_pts[0,2])
-        for l in range(9,own_items+1):
-            if l = 9:
-                pass
-            '''    
-            cyl_object = gl.MeshData.cylinder(rows=100,cols=100,radius=[5.0,5.0],length=20.0)
-            self.own_3d[l] = gl.GLMeshItem(meshdata=small_sphere, smooth=True, drawFaces=True, drawEdges=False, color=cyl_color)
+        for l in range(9,(self.own_items)):
+            if l == 9:
+                radius = self.dcol
+                height = 2.0*self.hcol
+                cyl_color = np.ones((cyl_object.faceCount(), 4), dtype=float)
+                cyl_color[:,3] = 0.2
+                cyl_color[:,0] = 0.0
+            elif l == 10:
+                radius = self.dsep
+                height = 2.0*self.hsep
+                cyl_color = (1,0,0,1)
+            elif l == 11:
+                radius = self.dth
+                height = self.hth
+                cyl_color = (1,0,0,1)
+            cyl_object = gl.MeshData.cylinder(rows=100,cols=100,radius=[radius,radius],length=height)
+            #colors = np.ones((cyl_object.faceCount(), 4), dtype=float)
+            #colors[::2,0] = 0
+            #colors[:,1] = np.linspace(0, 1, colors.shape[0])
+            cyl_object.setFaceColors(cyl_color)
+            #cyl_object.setFaceColors(cyl_color)
+            
+            self.own_3d[l] = gl.GLMeshItem(meshdata=cyl_object, smooth=True, drawFaces=True, drawEdges=False)
             self.w.addItem(self.own_3d[l])
+            print("added %d" %l)
+            self.own_3d[l].translate(0.0,0.0,-height/2.0)
             self.own_3d[l].translate(self.own_pts[0,0],self.own_pts[0,1],self.own_pts[0,2])
-            '''
+            
         
         '''
         # timing
@@ -175,7 +194,7 @@ class visualization(QtCore.QThread):
             angle_z = theta - self.own_rotate[0]
             angle_x = phi - self.own_rotate[1]
             angle_y = psi - self.own_rotate[2]
-            for k in range(9):
+            for k in range(self.own_items):
                 # translate object to origin
                 self.own_3d[k].translate(-self.own_pts[self.step-1,0],
                                     -self.own_pts[self.step-1,1],
@@ -197,7 +216,7 @@ class visualization(QtCore.QThread):
                                     self.itr_pts[self.step,1,k]-self.itr_pts[self.step-1,1,k],
                                     self.itr_pts[self.step,2,k]-self.itr_pts[self.step-1,2,k])
         else:
-            for k in range(9):
+            for k in range(self.own_items):
                 self.own_3d[k].translate(self.own_pts[0,0]-self.own_pts[self.step,0],
                                 self.own_pts[0,1]-self.own_pts[self.step,1],
                                 self.own_pts[0,2]-self.own_pts[self.step,2])
