@@ -148,25 +148,27 @@ class visualization(QtCore.QThread):
                 radius = self.dcol
                 height = 2.0*self.hcol
                 cyl_color = np.ones((cyl_object.faceCount(), 4), dtype=float)
-                cyl_color[:,3] = 0.2
+                cyl_color[:,3] = 0.4
                 cyl_color[:,0] = 0.0
             elif l == 10:
                 radius = self.dsep
                 height = 2.0*self.hsep
-                cyl_color = (1,0,0,1)
+                cyl_color = np.ones((cyl_object.faceCount(), 4), dtype=float)
+                cyl_color[:,3] = 0.4
+                cyl_color[:,1] = 0.0
             elif l == 11:
                 radius = self.dth
-                height = self.hth
-                cyl_color = (1,0,0,1)
+                height = 2.0*self.hth
+                cyl_color = np.ones((cyl_object.faceCount(), 4), dtype=float)
+                cyl_color[:,3] = 0.4
+                cyl_color[:,2] = 0.0
             cyl_object = gl.MeshData.cylinder(rows=100,cols=100,radius=[radius,radius],length=height)
-            #colors = np.ones((cyl_object.faceCount(), 4), dtype=float)
-            #colors[::2,0] = 0
-            #colors[:,1] = np.linspace(0, 1, colors.shape[0])
             cyl_object.setFaceColors(cyl_color)
-            #cyl_object.setFaceColors(cyl_color)
             
-            self.own_3d[l] = gl.GLMeshItem(meshdata=cyl_object, smooth=True, drawFaces=True, drawEdges=False)
+            self.own_3d[l] = gl.GLMeshItem(meshdata=cyl_object, smooth=False, drawFaces=True,drawEdges=False)
+            self.own_3d[l].setGLOptions('additive')
             self.w.addItem(self.own_3d[l])
+            print(cyl_color)
             print("added %d" %l)
             self.own_3d[l].translate(0.0,0.0,-height/2.0)
             self.own_3d[l].translate(self.own_pts[0,0],self.own_pts[0,1],self.own_pts[0,2])
