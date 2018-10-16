@@ -13,8 +13,9 @@ from math import *
 # added Modules
 from graphing import *
 import flags as flag
-import waypoints as wp
+#import waypoints as wp
 from intruder_v1 import intruder
+from ownship import ownship
 import time
 
 class visualization(QtCore.QThread):
@@ -22,6 +23,8 @@ class visualization(QtCore.QThread):
         QtCore.QThread.__init__(self)
         self.type = type
         self.num_intruders = num_intruders
+        if self.num_intruders > 20:
+            print("Warning: number of intruders exceeds limit")
         if type == "long":
             self.dr = flag.dr_long
         elif type == "short":
@@ -42,8 +45,8 @@ class visualization(QtCore.QThread):
 
 
         # add circle radii
-        for i in range(1,6):
-            circle_pts = drawCircle(0,0,0,i*self.dr/5)
+        for i in range(1,int(self.dr/1000.0)+1):
+            circle_pts = drawCircle(0,0,0,i*1000.0)
             color2 = pg.glColor('w')
             new_circle = gl.GLLinePlotItem(pos=circle_pts, color=color2, width=0.1, antialias=True)
             self.w.addItem(new_circle)
@@ -75,6 +78,8 @@ class visualization(QtCore.QThread):
         self.itr_3d = np.empty((self.num_intruders),dtype=object)
         self.itr_pts = np.empty((flag.N,3,self.num_intruders)) 
         for k in range(self.num_intruders):
+            for m in range(k,0,-1):
+                print(m)
             initial = rand_initial(self)
             itr_object = intruder(initial[0,:],initial[1,:])
             self.itr_pts[:,:,k] = itr_object.waypoints()
@@ -85,7 +90,8 @@ class visualization(QtCore.QThread):
             self.itr_3d[k].translate(initial[0,0],initial[0,1],initial[0,2])
 
         # Ownship
-        self.own_pts = wp.data
+        ownship1 = ownship()
+        self.own_pts = ownship1.waypoints()
         self.own_3d = np.empty(9,dtype=object)
         sphere_object = gl.MeshData.sphere(rows=100, cols=100, radius=10.0)
         small_sphere = gl.MeshData.sphere(rows=100, cols=100, radius=5.0)
@@ -177,7 +183,7 @@ class visualization(QtCore.QThread):
         if elapsed_time < flag.dt:
             time.sleep(flag.dt-elapsed_time)
         time2 = time.clock()
-        print(time2-time0)
+        #print(time2-time0)
         
 
 
