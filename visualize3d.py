@@ -111,7 +111,7 @@ class visualization(QtCore.QThread):
 
         # Ownship
         ownship1 = ownship()
-        self.own_items = 12 # number of meshes that make up ownship
+        self.own_items = 18 # number of meshes that make up ownship
         self.own_pts = ownship1.waypoints()
         self.own_3d = np.empty(self.own_items,dtype=object)
         sphere_object = gl.MeshData.sphere(rows=100, cols=100, radius=10.0)
@@ -150,28 +150,41 @@ class visualization(QtCore.QThread):
                 cyl_color = np.ones((cyl_object.faceCount(), 4), dtype=float)
                 cyl_color[:,3] = 0.4
                 cyl_color[:,0] = 0.0
-            elif l == 10:
+            elif l == 12:
                 radius = self.dsep
                 height = 2.0*self.hsep
                 cyl_color = np.ones((cyl_object.faceCount(), 4), dtype=float)
                 cyl_color[:,3] = 0.4
                 cyl_color[:,1] = 0.0
-            elif l == 11:
+            elif l == 15:
                 radius = self.dth
                 height = 2.0*self.hth
                 cyl_color = np.ones((cyl_object.faceCount(), 4), dtype=float)
                 cyl_color[:,3] = 0.4
                 cyl_color[:,2] = 0.0
-            cyl_object = gl.MeshData.cylinder(rows=100,cols=100,radius=[radius,radius],length=height)
-            cyl_object.setFaceColors(cyl_color)
             
-            self.own_3d[l] = gl.GLMeshItem(meshdata=cyl_object, smooth=False, drawFaces=True,drawEdges=False)
-            self.own_3d[l].setGLOptions('additive')
-            self.w.addItem(self.own_3d[l])
-            print(cyl_color)
-            print("added %d" %l)
-            self.own_3d[l].translate(0.0,0.0,-height/2.0)
-            self.own_3d[l].translate(self.own_pts[0,0],self.own_pts[0,1],self.own_pts[0,2])
+
+            if l == 9 or l == 12 or l == 15:
+                cyl_object = gl.MeshData.cylinder(rows=100,cols=100,radius=[radius,radius],length=height)
+                cyl_object.setFaceColors(cyl_color)
+                self.own_3d[l] = gl.GLMeshItem(meshdata=cyl_object, smooth=True, drawFaces=True,drawEdges=False)
+                top_circle_verts,top_circle_faces = circle_mesh(0,0,height,radius)
+                bot_circle_verts,bot_circle_faces = circle_mesh(0,0,0,radius)
+                cir_color = np.ones((cyl_object.faceCount(), 4), dtype=float)
+                cir_color[:,3] = 0.1 # transperancy
+                cir_color[:,0] = cyl_color[0,0]
+                cir_color[:,1] = cyl_color[0,1]
+                cir_color[:,2] = cyl_color[0,2]
+                self.own_3d[l+1] = gl.GLMeshItem(vertexes=top_circle_verts, faces=top_circle_faces, faceColors=cir_color, smooth=True)
+                self.own_3d[l+2] = gl.GLMeshItem(vertexes=bot_circle_verts, faces=bot_circle_faces, faceColors=cir_color, smooth=True)
+
+                for i in range(3):                  
+                    self.own_3d[l+i].setGLOptions('additive')
+                    self.w.addItem(self.own_3d[l+i])
+                    #print(cyl_color)
+                    #print("added %d" %l)
+                    self.own_3d[l+i].translate(0.0,0.0,-height/2.0)
+                    self.own_3d[l+i].translate(self.own_pts[0,0],self.own_pts[0,1],self.own_pts[0,2])
             
         
         '''
