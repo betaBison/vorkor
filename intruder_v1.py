@@ -9,8 +9,7 @@ class intruder(object):
         # velocity in the form of [Vx,Vy,Vz]
         self.velocity = velocity
 
-    def waypoints(self):
-        N = flag.N
+    def waypoints(self,N):
         pts = np.empty((N,3))
         pts[0] = self.position
         for i in range(1,N):

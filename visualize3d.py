@@ -86,33 +86,13 @@ class visualization(QtCore.QThread):
         zaxis = gl.GLLinePlotItem(pos=zaxis_pts,color=pg.glColor('b'),width=3.0)
         self.w.addItem(zaxis)
 
-
-        # Initialize and import paths of intruder 
-        self.itr_3d = np.empty((self.num_intruders),dtype=object)
-        self.itr_pts = np.empty((flag.N,3,self.num_intruders)) 
-        for k in range(self.num_intruders):
-            duplicate_flag = True
-            while duplicate_flag == True:
-                duplicate_flag = False
-                initial = rand_initial(self)
-                for m in range(k,-1,-1):
-                    if np.all(initial[0,:] == self.itr_pts[0,:,m]):
-                        #print("duplicate found")
-                        #print(initial[0,:],self.itr_pts[0,:,m])
-                        duplicate_flag = True
-                        break
-            itr_object = intruder(initial[0,:],initial[1,:])
-            self.itr_pts[:,:,k] = itr_object.waypoints()
-            sphere_object = gl.MeshData.sphere(rows=100, cols=100, radius=50)    
-            self.itr_3d[k] = gl.GLMeshItem(meshdata=sphere_object, smooth=False, drawFaces=True, drawEdges=False, color=(0,1.0-float(k)/self.num_intruders,float(k)/self.num_intruders,1) )
-            self.w.addItem(self.itr_3d[k])
-            # Translate to initial position
-            self.itr_3d[k].translate(initial[0,0],initial[0,1],initial[0,2])
-
         # Ownship
         ownship1 = ownship()
         self.own_items = 18 # number of meshes that make up ownship
-        self.own_pts = ownship1.waypoints()
+        self.own_pts = ownship1.waypoints2(self.dr)
+        # set number of waypoints needed
+        self.N = self.own_pts.shape[0]
+        print('N = ',self.N)
         self.own_3d = np.empty(self.own_items,dtype=object)
         sphere_object = gl.MeshData.sphere(rows=100, cols=100, radius=10.0)
         small_sphere = gl.MeshData.sphere(rows=100, cols=100, radius=5.0)
@@ -194,11 +174,31 @@ class visualization(QtCore.QThread):
         status_update_timer.timeout.connect(lambda: self.update_graph())
         status_update_timer.start(5000)
         '''
-        
+        # Initialize and import paths of intruder 
+        self.itr_3d = np.empty((self.num_intruders),dtype=object)
+        self.itr_pts = np.empty((self.N,3,self.num_intruders)) 
+        for k in range(self.num_intruders):
+            duplicate_flag = True
+            while duplicate_flag == True:
+                duplicate_flag = False
+                initial = rand_initial(self)
+                for m in range(k,-1,-1):
+                    if np.all(initial[0,:] == self.itr_pts[0,:,m]):
+                        #print("duplicate found")
+                        #print(initial[0,:],self.itr_pts[0,:,m])
+                        duplicate_flag = True
+                        break
+            itr_object = intruder(initial[0,:],initial[1,:])
+            self.itr_pts[:,:,k] = itr_object.waypoints(self.N)
+            sphere_object = gl.MeshData.sphere(rows=100, cols=100, radius=50)    
+            self.itr_3d[k] = gl.GLMeshItem(meshdata=sphere_object, smooth=False, drawFaces=True, drawEdges=False, color=(0,1.0-float(k)/self.num_intruders,float(k)/self.num_intruders,1) )
+            self.w.addItem(self.itr_3d[k])
+            # Translate to initial position
+            self.itr_3d[k].translate(initial[0,0],initial[0,1],initial[0,2])     
 
     def update_graph(self):
         time0 = time.clock()
-        if self.step < (flag.N-1):
+        if self.step < (self.N-1):
             self.step += 1
             dx = self.own_pts[self.step,0]-self.own_pts[self.step-1,0]
             dy = self.own_pts[self.step,1]-self.own_pts[self.step-1,1]
