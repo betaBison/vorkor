@@ -57,7 +57,7 @@ def circle_mesh(x0,y0,z0,radius):
     pts[0:N/2,1] = y0 + np.sqrt(radius**2 - (pts[0:N/2,0]-x0)**2)
     pts[N/2:N+1,1] = y0 - np.sqrt(radius**2 - (pts[N/2:N+1,0]-x0)**2)    
     pts[:,2] = z0
-    verts = pts
+    verts = np.delete(pts,[N-1,N/2],0)
     #print(verts.shape[0])
     #verts = np.vstack(([x0,y0,z0],pts))
     faces = np.zeros((verts.shape[0]-2,3),dtype=int)
@@ -70,3 +70,5 @@ def circle_mesh(x0,y0,z0,radius):
 #print(rand_pos())
 #print(rand_vel())
 #print(rand_initial())
+#result1,result2 = circle_mesh(0,0,0,10.0)
+#print(result1)
