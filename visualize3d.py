@@ -157,7 +157,8 @@ class visualization(QtCore.QThread):
                 cir_color[:,2] = cyl_color[0,2]
                 self.own_3d[l+1] = gl.GLMeshItem(vertexes=top_circle_verts, faces=top_circle_faces, faceColors=cir_color, smooth=True)
                 self.own_3d[l+2] = gl.GLMeshItem(vertexes=bot_circle_verts, faces=bot_circle_faces, faceColors=cir_color, smooth=True)
-
+                if l+2 == 10:
+                    print("circle shape",cir_color)
                 for i in range(3):                  
                     self.own_3d[l+i].setGLOptions('additive')
                     self.w.addItem(self.own_3d[l+i])
@@ -204,11 +205,11 @@ class visualization(QtCore.QThread):
             dy = self.own_pts[self.step,1]-self.own_pts[self.step-1,1]
             dz = self.own_pts[self.step,2]-self.own_pts[self.step-1,2]
             theta = degrees(atan2(dy,dx))
-            phi = degrees(atan2(dz,dy))
-            psi = degrees(atan2(dz,dx))
+            #phi = degrees(atan2(dz,dy))
+            #psi = degrees(atan2(dz,dx))
             angle_z = theta - self.own_rotate[0]
-            angle_x = phi - self.own_rotate[1]
-            angle_y = psi - self.own_rotate[2]
+            #angle_x = phi - self.own_rotate[1]
+            #angle_y = psi - self.own_rotate[2]
             for k in range(self.own_items):
                 # translate object to origin
                 self.own_3d[k].translate(-self.own_pts[self.step-1,0],
@@ -224,12 +225,22 @@ class visualization(QtCore.QThread):
                                     self.own_pts[self.step,2])
                 #new_u = [dx/sqrt(dx**2+dy**2+dz**2),dy/sqrt(dx**2+dy**2+dz**2),dz/sqrt(dx**2+dy**2+dz**2)]
             self.own_rotate[0] = theta
-            self.own_rotate[1] = phi
-            self.own_rotate[2] = psi
+            #self.own_rotate[1] = phi
+            #self.own_rotate[2] = psi
             for k in range(self.num_intruders):
                 self.itr_3d[k].translate(self.itr_pts[self.step,0,k]-self.itr_pts[self.step-1,0,k],
                                     self.itr_pts[self.step,1,k]-self.itr_pts[self.step-1,1,k],
                                     self.itr_pts[self.step,2,k]-self.itr_pts[self.step-1,2,k])
+            print(self.step)
+            if self.step >= 50:
+                print("CHANGING COLOR")
+                new_color = np.ones((20000, 4), dtype=float)
+                new_color[:,3] = 0.4
+                new_color[:,0] = 1.0
+                #self.own_3d[10].setMeshData(faceColors=new_color)
+                self.own_3d[10].colors = new_color
+                self.own_3d[10].meshDataChanged()
+
         else:
             for k in range(self.own_items):
                 self.own_3d[k].translate(self.own_pts[0,0]-self.own_pts[self.step,0],
@@ -240,6 +251,9 @@ class visualization(QtCore.QThread):
                                     self.itr_pts[0,1,k]-self.itr_pts[self.step,1,k],
                                     self.itr_pts[0,2,k]-self.itr_pts[self.step,2,k])
             self.step = 0
+
+        
+        
 
         self.app.processEvents()
         time1 = time.clock()
