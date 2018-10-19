@@ -88,7 +88,7 @@ class visualization(QtCore.QThread):
 
         # Ownship
         ownship1 = ownship()
-        self.own_items = 18 # number of meshes that make up ownship
+        self.own_items = 21 # number of meshes that make up ownship
         self.own_pts = ownship1.waypoints2(self.dr)
         # set number of waypoints needed
         self.N = self.own_pts.shape[0]
@@ -130,13 +130,13 @@ class visualization(QtCore.QThread):
                 cyl_color = np.ones((cyl_object.faceCount(), 4), dtype=float)
                 cyl_color[:,3] = 0.4
                 cyl_color[:,0] = 0.0
-            elif l == 12:
+            elif l == 13:
                 radius = self.dsep
                 height = 2.0*self.hsep
                 cyl_color = np.ones((cyl_object.faceCount(), 4), dtype=float)
                 cyl_color[:,3] = 0.4
                 cyl_color[:,1] = 0.0
-            elif l == 15:
+            elif l == 17:
                 radius = self.dth
                 height = 2.0*self.hth
                 cyl_color = np.ones((cyl_object.faceCount(), 4), dtype=float)
@@ -144,10 +144,14 @@ class visualization(QtCore.QThread):
                 cyl_color[:,2] = 0.0
             
 
-            if l == 9 or l == 12 or l == 15:
+            if l == 9 or l == 13 or l == 17:
                 cyl_object = gl.MeshData.cylinder(rows=100,cols=100,radius=[radius,radius],length=height)
                 cyl_object.setFaceColors(cyl_color)
                 self.own_3d[l] = gl.GLMeshItem(meshdata=cyl_object, smooth=True, drawFaces=True,drawEdges=False)
+                cyl_color2 = np.ones((cyl_object.faceCount(), 4), dtype=float)
+                cyl_color2[:,3] = 0.1
+                cyl_object.setFaceColors(cyl_color2)
+                self.own_3d[l+1] = gl.GLMeshItem(meshdata=cyl_object, smooth=True, drawFaces=True,drawEdges=False)
                 top_circle_verts,top_circle_faces = circle_mesh(0,0,height,radius)
                 bot_circle_verts,bot_circle_faces = circle_mesh(0,0,0,radius)
                 cir_color = np.ones((cyl_object.faceCount(), 4), dtype=float)
@@ -155,18 +159,28 @@ class visualization(QtCore.QThread):
                 cir_color[:,0] = cyl_color[0,0]
                 cir_color[:,1] = cyl_color[0,1]
                 cir_color[:,2] = cyl_color[0,2]
-                self.own_3d[l+1] = gl.GLMeshItem(vertexes=top_circle_verts, faces=top_circle_faces, faceColors=cir_color, smooth=True)
-                self.own_3d[l+2] = gl.GLMeshItem(vertexes=bot_circle_verts, faces=bot_circle_faces, faceColors=cir_color, smooth=True)
-                if l+2 == 10:
-                    print("circle shape",cir_color)
-                for i in range(3):                  
+                self.own_3d[l+2] = gl.GLMeshItem(vertexes=top_circle_verts, faces=top_circle_faces, faceColors=cir_color, smooth=True)
+                self.own_3d[l+3] = gl.GLMeshItem(vertexes=bot_circle_verts, faces=bot_circle_faces, faceColors=cir_color, smooth=True)
+                '''
+                if l == 9:
+                    print("circle shape",cyl_color)
+                    print("circle color rows",cir_color.shape[0])
+                    print("circle color columns",cir_color.shape[1])
+                    new_color = np.ones((cir_color.shape[0],cir_color.shape[1]), dtype=float)
+                    new_color[:,3] = 0.4
+                    new_color[:,0] = 1.0
+                    new_color[:,1] = 1.0
+                    new_color[:,2] = 1.0
+                    self.own_3d[l+1] = gl.GLMeshItem(faceColors=new_color)
+                '''
+                for i in range(4):                  
                     self.own_3d[l+i].setGLOptions('additive')
                     self.w.addItem(self.own_3d[l+i])
                     #print(cyl_color)
                     #print("added %d" %l)
                     self.own_3d[l+i].translate(0.0,0.0,-height/2.0)
                     self.own_3d[l+i].translate(self.own_pts[0,0],self.own_pts[0,1],self.own_pts[0,2])
-            
+        
         
         '''
         # timing
@@ -232,14 +246,36 @@ class visualization(QtCore.QThread):
                                     self.itr_pts[self.step,1,k]-self.itr_pts[self.step-1,1,k],
                                     self.itr_pts[self.step,2,k]-self.itr_pts[self.step-1,2,k])
             print(self.step)
-            if self.step >= 50:
+            if self.step == 2:
+                for k in range(10,self.own_items):
+                    self.own_3d[k].setVisible(False)
+            if self.step == 50:
                 print("CHANGING COLOR")
+                '''
+                cyl_object = gl.MeshData.cylinder(rows=100,cols=100,radius=[self.dcol,self.dcol],length=self.hcol)
+                cyl_color = np.ones((cyl_object.faceCount(), 4), dtype=float)
+                cyl_color[:,3] = 1.0
+                cyl_color[:,0] = 1.0
+                cyl_color[:,1] = 1.0
+                cyl_color[:,2] = 1.0
+                cyl_object.setFaceColors(cyl_color)
+                self.own_3d[9].setVisible(False)
+                self.own_3d[9] = gl.GLMeshItem(meshdata=cyl_object, smooth=True, drawFaces=True,drawEdges=False,
+                                               glOptions='additive')
+                self.w.addItem(self.own_3d[9])
+                '''
+                
+
+                '''
                 new_color = np.ones((20000, 4), dtype=float)
                 new_color[:,3] = 0.4
                 new_color[:,0] = 1.0
+                new_color[:,1] = 0.0
+                new_color[:,2] = 1.0
                 #self.own_3d[10].setMeshData(faceColors=new_color)
-                self.own_3d[10].colors = new_color
+                self.own_3d[10].color = new_color
                 self.own_3d[10].meshDataChanged()
+                '''
 
         else:
             for k in range(self.own_items):
