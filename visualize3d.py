@@ -148,10 +148,11 @@ class visualization(QtCore.QThread):
                 cyl_object = gl.MeshData.cylinder(rows=100,cols=100,radius=[radius,radius],length=height)
                 cyl_object.setFaceColors(cyl_color)
                 self.own_3d[l] = gl.GLMeshItem(meshdata=cyl_object, smooth=True, drawFaces=True,drawEdges=False)
-                cyl_color2 = np.ones((cyl_object.faceCount(), 4), dtype=float)
+                cyl_object2 = gl.MeshData.cylinder(rows=100,cols=100,radius=[radius,radius],length=height)
+                cyl_color2 = np.ones((cyl_object2.faceCount(), 4), dtype=float)
                 cyl_color2[:,3] = 0.1
-                cyl_object.setFaceColors(cyl_color2)
-                self.own_3d[l+1] = gl.GLMeshItem(meshdata=cyl_object, smooth=True, drawFaces=True,drawEdges=False)
+                cyl_object2.setFaceColors(cyl_color2)
+                self.own_3d[l+1] = gl.GLMeshItem(meshdata=cyl_object2, smooth=True, drawFaces=True,drawEdges=False)
                 top_circle_verts,top_circle_faces = circle_mesh(0,0,height,radius)
                 bot_circle_verts,bot_circle_faces = circle_mesh(0,0,0,radius)
                 cir_color = np.ones((cyl_object.faceCount(), 4), dtype=float)
@@ -176,11 +177,12 @@ class visualization(QtCore.QThread):
                 for i in range(4):                  
                     self.own_3d[l+i].setGLOptions('additive')
                     self.w.addItem(self.own_3d[l+i])
+                    if i == 1:
+                        self.own_3d[l+i].setVisible(False)
                     #print(cyl_color)
                     #print("added %d" %l)
                     self.own_3d[l+i].translate(0.0,0.0,-height/2.0)
                     self.own_3d[l+i].translate(self.own_pts[0,0],self.own_pts[0,1],self.own_pts[0,2])
-        
         
         '''
         # timing
@@ -246,36 +248,6 @@ class visualization(QtCore.QThread):
                                     self.itr_pts[self.step,1,k]-self.itr_pts[self.step-1,1,k],
                                     self.itr_pts[self.step,2,k]-self.itr_pts[self.step-1,2,k])
             print(self.step)
-            if self.step == 2:
-                for k in range(10,self.own_items):
-                    self.own_3d[k].setVisible(False)
-            if self.step == 50:
-                print("CHANGING COLOR")
-                '''
-                cyl_object = gl.MeshData.cylinder(rows=100,cols=100,radius=[self.dcol,self.dcol],length=self.hcol)
-                cyl_color = np.ones((cyl_object.faceCount(), 4), dtype=float)
-                cyl_color[:,3] = 1.0
-                cyl_color[:,0] = 1.0
-                cyl_color[:,1] = 1.0
-                cyl_color[:,2] = 1.0
-                cyl_object.setFaceColors(cyl_color)
-                self.own_3d[9].setVisible(False)
-                self.own_3d[9] = gl.GLMeshItem(meshdata=cyl_object, smooth=True, drawFaces=True,drawEdges=False,
-                                               glOptions='additive')
-                self.w.addItem(self.own_3d[9])
-                '''
-                
-
-                '''
-                new_color = np.ones((20000, 4), dtype=float)
-                new_color[:,3] = 0.4
-                new_color[:,0] = 1.0
-                new_color[:,1] = 0.0
-                new_color[:,2] = 1.0
-                #self.own_3d[10].setMeshData(faceColors=new_color)
-                self.own_3d[10].color = new_color
-                self.own_3d[10].meshDataChanged()
-                '''
 
         else:
             for k in range(self.own_items):
