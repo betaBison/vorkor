@@ -8,7 +8,7 @@ class ownship(object):
         self.position = [0.0,0.0,400.0]
         # velocity in the form of [Vx,Vy,Vz]
         # initial airspeed set to 80kn p.118
-        self.velocity = [41.1556,0,0]
+        #self.velocity = [41.1556,0,0]
         #self.velocity = [1178.0,0,0] # way too speedy for testing
 
     def waypoints(self):
