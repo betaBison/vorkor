@@ -29,6 +29,8 @@ stop simulation when ownship leaves the perimeter
 remove extra 2 points in circle mesh to stop warning
 10/20/18
 have cylinders color blip white if collision
+10/22/18
+more accurate timing
 
 TO DO:
 keep code relevant and organized

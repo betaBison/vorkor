@@ -23,6 +23,7 @@ class visualization(QtCore.QThread):
         QtCore.QThread.__init__(self)
         self.type = type
         self.num_intruders = num_intruders
+        self.time_start = time.time()
         if self.num_intruders > 20:
             print("Warning: number of intruders exceeds limit")
             print("Must be <= 20 intruders")
@@ -171,18 +172,7 @@ class visualization(QtCore.QThread):
                 cir_color[:,2] = cyl_color[0,2]
                 self.own_3d[l+2] = gl.GLMeshItem(vertexes=top_circle_verts, faces=top_circle_faces, faceColors=cir_color, smooth=True)
                 self.own_3d[l+3] = gl.GLMeshItem(vertexes=bot_circle_verts, faces=bot_circle_faces, faceColors=cir_color, smooth=True)
-                '''
-                if l == 9:
-                    print("circle shape",cyl_color)
-                    print("circle color rows",cir_color.shape[0])
-                    print("circle color columns",cir_color.shape[1])
-                    new_color = np.ones((cir_color.shape[0],cir_color.shape[1]), dtype=float)
-                    new_color[:,3] = 0.4
-                    new_color[:,0] = 1.0
-                    new_color[:,1] = 1.0
-                    new_color[:,2] = 1.0
-                    self.own_3d[l+1] = gl.GLMeshItem(faceColors=new_color)
-                '''
+
                 for i in range(4):                  
                     self.own_3d[l+i].setGLOptions('additive')
                     self.w.addItem(self.own_3d[l+i])
@@ -193,13 +183,6 @@ class visualization(QtCore.QThread):
                     self.own_3d[l+i].translate(0.0,0.0,-height/2.0)
                     self.own_3d[l+i].translate(self.own_pts[0,0],self.own_pts[0,1],self.own_pts[0,2])
         
-        '''
-        # timing
-        status_update_timer = QtCore.QTimer(self)
-        status_update_timer.setSingleShot(False)
-        status_update_timer.timeout.connect(lambda: self.update_graph())
-        status_update_timer.start(5000)
-        '''
         # Initialize and import paths of intruder 
         self.itr_3d = np.empty((self.num_intruders),dtype=object)
         self.itr_pts = np.empty((self.N,3,self.num_intruders)) 
@@ -223,7 +206,9 @@ class visualization(QtCore.QThread):
             self.itr_3d[k].translate(initial[0,0],initial[0,1],initial[0,2])     
 
     def update_graph(self):
-        time0 = time.clock()
+        time0 = time.time()
+        if self.step == 2:
+            print("Startup time = %.5f" %(time0 -self.time_start))
         if self.step < (self.N-1):
             self.step += 1
             dx = self.own_pts[self.step,0]-self.own_pts[self.step-1,0]
@@ -262,6 +247,7 @@ class visualization(QtCore.QThread):
                         self.collision_flag_timer = 1
                         self.intruder_status[k,0] = True
                         self.own_3d[10].setVisible(True)
+                        #print("collision")
                      if in_circle == False and self.intruder_status[k] == True:
                          self.intruder_status[k,0] == False
                 if ((self.itr_pts[self.step,0,k]-self.own_pts[self.step,0])**2 + (self.itr_pts[self.step,1,k]-self.own_pts[self.step,1])**2) <= self.dsep**2 and abs(self.itr_pts[self.step,2,k]-self.own_pts[self.step,2]) <= self.hsep:
@@ -270,6 +256,7 @@ class visualization(QtCore.QThread):
                         self.separation_flag_timer = 1
                         self.intruder_status[k,1] = True
                         self.own_3d[14].setVisible(True)
+                        #print("separation")
                      if in_circle == False and self.intruder_status[k,1] == True:
                          self.intruder_status[k,1] == False
                 if ((self.itr_pts[self.step,0,k]-self.own_pts[self.step,0])**2 + (self.itr_pts[self.step,1,k]-self.own_pts[self.step,1])**2) <= self.dth**2 and abs(self.itr_pts[self.step,2,k]-self.own_pts[self.step,2]) <= self.hth:
@@ -278,6 +265,7 @@ class visualization(QtCore.QThread):
                         self.threshold_flag_timer = 1
                         self.intruder_status[k,2] = True
                         self.own_3d[18].setVisible(True)
+                        #print("threshold")
                      if in_circle == False and self.intruder_status[k,2] == True:
                          self.intruder_status[k,2] == False
             if self.separation_flag_timer > 0:
@@ -294,8 +282,7 @@ class visualization(QtCore.QThread):
                 self.threshold_flag_timer += 1
                 if self.threshold_flag_timer == 6:
                     self.threshold_flag_timer = 0
-                    self.own_3d[18].setVisible(False)
-            print(self.step)
+                    self.own_3d[18].setVisible(False)            
 
         else:
             for k in range(self.own_items):
@@ -309,15 +296,17 @@ class visualization(QtCore.QThread):
             self.step = 0
 
         
-        
 
+        #print(self.step)
         self.app.processEvents()
-        time1 = time.clock()
+        time1 = time.time()
         elapsed_time = time1-time0
+        #print("initial elapsed time = %.5f" %elapsed_time)
         if elapsed_time < flag.dt:
             time.sleep(flag.dt-elapsed_time)
-        time2 = time.clock()
-        #print(time2-time0)
+            #print("too fast! sleep for %.5f" % (flag.dt-elapsed_time))
+        #time2 = time.time()
+        #print("after sleeping = %.5f" %(time2-time0))
         
 
 

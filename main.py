@@ -5,7 +5,7 @@ def main():
     # visualization("short" or "long", # intruders)
     graph = visualization("short",20)
 
-    while(1):
+    while(True):
         graph.update_graph()
 
 if __name__ == '__main__':
