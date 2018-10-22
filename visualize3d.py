@@ -47,11 +47,11 @@ class visualization(QtCore.QThread):
             print("invalid simulation type")
         
         # Colision variables
-        self.collision_flag = False
+        self.collision_count = 0
         self.collision_flag_timer = 0
-        self.separation_flag = False
+        self.separation_count = 0
         self.separation_flag_timer = 0
-        self.threshold_flag = False
+        self.threshold_count = 0
         self.threshold_flag_timer = 0
         self.intruder_status = np.zeros((self.num_intruders,3),dtype=bool)
         self.step = 0
@@ -247,6 +247,7 @@ class visualization(QtCore.QThread):
                         self.collision_flag_timer = 1
                         self.intruder_status[k,0] = True
                         self.own_3d[10].setVisible(True)
+                        self.collision_count += 1
                         #print("collision")
                      if in_circle == False and self.intruder_status[k] == True:
                          self.intruder_status[k,0] == False
@@ -256,6 +257,7 @@ class visualization(QtCore.QThread):
                         self.separation_flag_timer = 1
                         self.intruder_status[k,1] = True
                         self.own_3d[14].setVisible(True)
+                        self.separation_count += 1
                         #print("separation")
                      if in_circle == False and self.intruder_status[k,1] == True:
                          self.intruder_status[k,1] == False
@@ -265,6 +267,7 @@ class visualization(QtCore.QThread):
                         self.threshold_flag_timer = 1
                         self.intruder_status[k,2] = True
                         self.own_3d[18].setVisible(True)
+                        self.threshold_count += 1
                         #print("threshold")
                      if in_circle == False and self.intruder_status[k,2] == True:
                          self.intruder_status[k,2] == False
@@ -307,6 +310,9 @@ class visualization(QtCore.QThread):
             #print("too fast! sleep for %.5f" % (flag.dt-elapsed_time))
         #time2 = time.time()
         #print("after sleeping = %.5f" %(time2-time0))
+        print("Colisions = %i" % self.collision_count)
+        print("Separations = %i" % self.separation_count)
+        print("Thresholds = %i" % self.threshold_count)
         
 
 
