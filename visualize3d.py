@@ -19,10 +19,11 @@ from ownship import ownship
 import time
 
 class visualization(QtCore.QThread):
-    def __init__(self,type,num_intruders):
+    def __init__(self,type,num_intruders,reference_frame):
         QtCore.QThread.__init__(self)
         self.type = type
         self.num_intruders = num_intruders
+        self.reference_frame = reference_frame
         self.time_start = time.time()
         if self.num_intruders > 20:
             print("Warning: number of intruders exceeds limit")
@@ -231,9 +232,8 @@ class visualization(QtCore.QThread):
                 #self.own_3d[k].rotate(angle_y,0,1,0)
                 # translate object back to its spot
                 self.own_3d[k].translate(self.own_pts[self.step,0],
-                                    self.own_pts[self.step,1],
-                                    self.own_pts[self.step,2])
-                #new_u = [dx/sqrt(dx**2+dy**2+dz**2),dy/sqrt(dx**2+dy**2+dz**2),dz/sqrt(dx**2+dy**2+dz**2)]
+                                         self.own_pts[self.step,1],
+                                        self.own_pts[self.step,2])
             self.own_rotate[0] = theta
             #self.own_rotate[1] = phi
             #self.own_rotate[2] = psi

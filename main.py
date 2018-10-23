@@ -2,8 +2,9 @@ from visualize3d import visualization
 
 
 def main():
-    # visualization("short" or "long", # intruders)
-    graph = visualization("short",20)
+    # visualization("short" or "long", number of intruders,
+    #                   "body" or "static" inertial frame)
+    graph = visualization("long",20,"body")
 
     while(True):
         graph.update_graph()
