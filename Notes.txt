@@ -2,7 +2,7 @@ assume fixed-wing vs. quadrotor
 radar input with recursive ransack
 #class of intruders
 	initialize (position, velocity)
-	rotation matrices, trajectories	
+	rotation matrices, trajectories
 	hold min turn radius
 	return trajectory
 class ownship (min radius, parameters)
@@ -40,4 +40,3 @@ implement monte carlo options
 create "shadow" of previous locations
 create functionality alerting if any volumes interfered
 add mesh of intruder vehicles
-	
