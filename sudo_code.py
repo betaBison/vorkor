@@ -5,12 +5,11 @@ how to stop???
 how much error handling should I implement?\
 numpy or no?
 cordinate axes use for states?
-
-
+suggested header information?
+Brady's variable naming guide
 
 
 def main():
-
     draw = True
     o1 = Ownship(short/long) # possibly vehicle class
     int_list = []
@@ -22,8 +21,9 @@ def main():
             for number intruders:
                 int_list[i].prop.state()
         if draw:
-            graph.update() # try not sending information
             graph = vis(o1,int_list,body inertial frame)
+            graph.update() # try not sending information
+
 
 
 class ownship(short/long)

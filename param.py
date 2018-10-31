@@ -1,8 +1,3 @@
-# Flags for visualization
-
-
-
-
 # LONG-RANGE PARAMETERS
 # short-range radius = 1.62nmi p.118
 dr_short = 3000       # m, radius of graphic for collision avoidance
@@ -38,7 +33,5 @@ dcol_long = 152.4
 # half of total = 100ft
 hcol_long = 30.48
 
-# Visualization Parameters
+# VISUALIZATION PARAMETERS
 dt = 0.050      # sec, time step
-total_time = 30 # sec, total time
-N = int(total_time/dt) # number of distinct steps in visualization
