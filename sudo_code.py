@@ -2,6 +2,9 @@ Questions:
 dynamically resizing arrays
 timestep?
 how to stop???
+how much error handling should I implement?\
+numpy or no?
+cordinate axes use for states?
 
 
 
