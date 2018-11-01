@@ -1,3 +1,5 @@
+from math import pi
+
 # LONG-RANGE PARAMETERS
 # short-range radius = 1.62nmi p.118
 dr_short = 3000       # m, radius of graphic for collision avoidance
@@ -32,6 +34,11 @@ dcol_long = 152.4
 # collision total height = 200ft p.119
 # half of total = 100ft
 hcol_long = 30.48
+
+#INTRUDER PARAMETERS
+#angle range that intruder penetrates circle
+# pi means could be anywhere inside circle including tangent
+intruder_spectrum = pi # radians
 
 # VISUALIZATION PARAMETERS
 dt = 0.050      # sec, time step
