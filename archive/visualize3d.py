@@ -46,7 +46,7 @@ class visualization(QtCore.QThread):
             self.hcol = flag.hcol_short
         else:
             print("invalid simulation type")
-        
+
         # Colision variables
         self.collision_count = 0
         self.collision_flag_timer = 0
@@ -60,7 +60,7 @@ class visualization(QtCore.QThread):
         #QtCore.QThread.__init__(self)
 
         pg.setConfigOptions(antialias=True)
-        self.app = QtGui.QApplication([])        
+        self.app = QtGui.QApplication([])
         self.w = gl.GLViewWidget()
         self.w.setWindowTitle('pyqtgraph example: GLScatterPlotItem')
         self.w.opts['distance'] = 2*self.dr
@@ -153,7 +153,7 @@ class visualization(QtCore.QThread):
                 cyl_color = np.ones((cyl_object.faceCount(), 4), dtype=float)
                 cyl_color[:,3] = 0.4
                 cyl_color[:,2] = 0.0
-            
+
 
             if l == 9 or l == 13 or l == 17:
                 cyl_object = gl.MeshData.cylinder(rows=100,cols=100,radius=[radius,radius],length=height)
@@ -174,7 +174,7 @@ class visualization(QtCore.QThread):
                 self.own_3d[l+2] = gl.GLMeshItem(vertexes=top_circle_verts, faces=top_circle_faces, faceColors=cir_color, smooth=True)
                 self.own_3d[l+3] = gl.GLMeshItem(vertexes=bot_circle_verts, faces=bot_circle_faces, faceColors=cir_color, smooth=True)
 
-                for i in range(4):                  
+                for i in range(4):
                     self.own_3d[l+i].setGLOptions('additive')
                     self.w.addItem(self.own_3d[l+i])
                     if i == 1:
@@ -183,10 +183,10 @@ class visualization(QtCore.QThread):
                     #print("added %d" %l)
                     self.own_3d[l+i].translate(0.0,0.0,-height/2.0)
                     self.own_3d[l+i].translate(self.own_pts[0,0],self.own_pts[0,1],self.own_pts[0,2])
-        
-        # Initialize and import paths of intruder 
+
+        # Initialize and import paths of intruder
         self.itr_3d = np.empty((self.num_intruders),dtype=object)
-        self.itr_pts = np.empty((self.N,3,self.num_intruders)) 
+        self.itr_pts = np.empty((self.N,3,self.num_intruders))
         for k in range(self.num_intruders):
             duplicate_flag = True
             while duplicate_flag == True:
@@ -200,11 +200,11 @@ class visualization(QtCore.QThread):
                         break
             itr_object = intruder(initial[0,:],initial[1,:])
             self.itr_pts[:,:,k] = itr_object.waypoints(self.N)
-            sphere_object = gl.MeshData.sphere(rows=100, cols=100, radius=50)    
+            sphere_object = gl.MeshData.sphere(rows=100, cols=100, radius=50)
             self.itr_3d[k] = gl.GLMeshItem(meshdata=sphere_object, smooth=False, drawFaces=True, drawEdges=False, color=(0,1.0-float(k)/self.num_intruders,float(k)/self.num_intruders,1) )
             self.w.addItem(self.itr_3d[k])
             # Translate to initial position
-            self.itr_3d[k].translate(initial[0,0],initial[0,1],initial[0,2])     
+            self.itr_3d[k].translate(initial[0,0],initial[0,1],initial[0,2])
 
     def update_graph(self):
         time0 = time.time()
@@ -285,7 +285,7 @@ class visualization(QtCore.QThread):
                 self.threshold_flag_timer += 1
                 if self.threshold_flag_timer == 6:
                     self.threshold_flag_timer = 0
-                    self.own_3d[18].setVisible(False)            
+                    self.own_3d[18].setVisible(False)
 
         else:
             for k in range(self.own_items):
@@ -298,7 +298,7 @@ class visualization(QtCore.QThread):
                                         self.itr_pts[0,2,k]-self.itr_pts[self.step,2,k])
             self.step = 0
 
-        
+
 
         #print(self.step)
         self.app.processEvents()
@@ -313,7 +313,7 @@ class visualization(QtCore.QThread):
         print("Colisions = %i" % self.collision_count)
         print("Separations = %i" % self.separation_count)
         print("Thresholds = %i" % self.threshold_count)
-        
+
 
 
 

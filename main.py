@@ -5,14 +5,13 @@ import numpy as np
 
 def main():
     draw = True
-    intruder_num = 3
+    intruder_num = 20
     type = 'short'          #options are 'short' or 'long'
 
 
     o1 = Ownship(type)
-
     for ii in range(intruder_num):
-        new_intruder = Intruder(type,intruder_list)
+        new_intruder = Intruder(type,[])
         if ii == 0:
             intruder_list = new_intruder.states
         else:
