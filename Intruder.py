@@ -7,14 +7,18 @@ class Intruder(Vehicle):
     def __init__(self,type,intruder_list):
         Vehicle.__init__(self,type)
         self.intruder_list = intruder_list
-        self.rand_initial()
-
-
-        '''
-        for ii in range(self.intruder_list.shape()):
-            print(ii)
-        '''
-
+        duplicate_flag = True
+        while duplicate_flag == True:
+            duplicate_flag = False
+            self.rand_initial()
+            print(len(self.intruder_list))
+            '''
+            for ii in range(len(self.intruder_list)):
+                if self.states[0] == self.intruder_list[ii][0] and self.states[1] == self.intruder_list[ii][1]:
+                    print("duplicate found")
+                    duplicate_flag = True
+                    break
+            '''
 
     def rand_vel(self):
         # creates randomized intruder velocity
