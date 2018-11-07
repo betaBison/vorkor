@@ -41,8 +41,3 @@ class Intruder(Vehicle):
         velocity = [speed*np.cos(theta),speed*np.sin(theta),climb]
         self.states[0,0:3] = position
         self.states[0,3:6] = velocity
-
-
-if __name__ == '__main__':
-    blah = Intruder()
-    print('HELLO!')

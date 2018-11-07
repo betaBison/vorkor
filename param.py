@@ -39,6 +39,8 @@ hcol_long = 30.48
 #angle range that intruder penetrates circle
 # pi means could be anywhere inside circle including tangent
 intruder_spectrum = pi # radians
+# number of places intruders could be placed around the circle
+intruder_pos_places = 20
 
 # VISUALIZATION PARAMETERS
 dt = 0.050      # sec, time step

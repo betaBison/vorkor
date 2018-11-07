@@ -1,4 +1,5 @@
+import sys
+
 def error1():
-    raise NameError('Invalid Simulation Type')
-    #print("Invalid simulation type. Must be either 'long' or 'short'")
-    
+    sys.exit("Invalid 'type' variable for simulation type in the main.py \
+function. Must be either 'long' or 'short'")
