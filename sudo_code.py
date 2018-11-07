@@ -1,12 +1,27 @@
 Questions:
-dynamically resizing arrays
-timestep?
-how to stop???
-how much error handling should I implement?\
-numpy or no?
-cordinate axes use for states?
+#dynamically resizing arrays
+#timestep?
+#how to stop???
+#how much error handling should I implement?\
+#numpy or no?
+#cordinate axes use for states?
+
+
 suggested header information?
-Brady's variable naming guide
+#Brady's variable naming guide
+
+
+
+TODO:
+change to lists instead of numpy arrays
+change number of places
+convert to a numpy at the end
+0.01 seconds for timestep
+stop when intruders are fully outside the dr
+moderate error handling
+frame of reference = _if,_bf
+_R = rotation
+
 
 
 def main():
