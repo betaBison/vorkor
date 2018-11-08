@@ -2,7 +2,10 @@
 # python
 *.pyc
 .ipynb_checkpoints/
+__pycache__/
 
+# specific to vorkor
+Vehicles/__pycache__/
 
 # matlab
 *.asv
@@ -129,7 +132,6 @@ CMakeCXXCompilerId.cpp
 
 # # # # #
 
-__pycache__/
 *.*~
 
 # # # # #
