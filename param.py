@@ -1,4 +1,5 @@
 from math import pi
+import param
 
 # LONG-RANGE PARAMETERS
 # short-range radius = 1.62nmi p.118
@@ -41,6 +42,8 @@ hcol_long = 30.48
 intruder_spectrum = pi # radians
 # number of places intruders could be placed around the circle
 intruder_pos_places = 20
+# initial intruder height
+intruder_height = 0.0
 
 # VISUALIZATION PARAMETERS
 dt = 0.050      # sec, time step
