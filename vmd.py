@@ -1,6 +1,8 @@
 # #!/usr/bin/python3
 
 # Latis MoDules     -->     lmd name space
+# TODO:
+# add angle wrapping
 
 import numpy as np
 
