@@ -1,6 +1,7 @@
 from Vehicles import Vehicle
 import param
 import numpy as np
+from vmd import *
 
 class Ownship(Vehicle):
     def __init__(self,type):
@@ -17,15 +18,9 @@ class Ownship(Vehicle):
             else:
                 self.intruder_spots = np.hstack((self.intruder_spots,new_spot.T))
             '''
-            new_spot = self.dr*self.Rz(angles[ii])[0,:] + np.array([[0.0,0.0,param.intruder_height]])
+            #new_spot = self.dr*self.Rz(angles[ii])[0,:] + np.array([[0.0,0.0,param.intruder_height]])
+            new_spot = self.dr*Rz_I2B(angles[ii])[0,:] + np.array([[0.0,0.0,param.intruder_height]])
             if ii == 0:
                 self.intruder_spots = new_spot
             else:
                 self.intruder_spots = np.vstack((self.intruder_spots,new_spot))
-
-
-    def Rz(self,input):
-        output = np.matrix([[np.cos(input),np.sin(input),0.],
-                            [-np.sin(input),np.cos(input),0.],
-                            [0.,0.,1.]])
-        return output

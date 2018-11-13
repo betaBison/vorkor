@@ -16,11 +16,12 @@ def main():
 
     o1 = Ownship(type)
     o1.intruder_pos_places()
+
     np.random.shuffle(o1.intruder_spots)
     intruder_list = []
     for ii in range(intruder_num):
         new_intruder = Intruder(type,o1.intruder_spots[ii,:])
-        #intruder_list.append(new_intruder)
+        intruder_list.append(new_intruder)
         '''
         for kk 2:number:
             o1.prop.state()
@@ -30,7 +31,6 @@ def main():
             graph.update() # try not sending information
             graph = vis(o1,int_list,body inertial frame)
         '''
-    #print(intruder_list)
 
     #plt.plot(,'bo')
     #plt.show()
