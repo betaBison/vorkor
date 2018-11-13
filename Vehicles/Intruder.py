@@ -5,10 +5,11 @@ import param
 import error_codes
 
 class Intruder(Vehicle):
-    def __init__(self,type,):
+    def __init__(self,type,initial_position):
         Vehicle.__init__(self,type)
-        self.intruder_list = intruder_list
+        #self.intruder_list = intruder_list
         duplicate_flag = True
+        '''
         while duplicate_flag == True:
             duplicate_flag = False
             self.rand_initial()
@@ -18,6 +19,7 @@ class Intruder(Vehicle):
                     #print("duplicate found")
                     duplicate_flag = True
                     break
+        '''
 
     def rand_vel(self):
         # creates randomized intruder velocity

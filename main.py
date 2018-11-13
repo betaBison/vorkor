@@ -16,12 +16,11 @@ def main():
 
     o1 = Ownship(type)
     o1.intruder_pos_places()
-    random.shuffle(o1.intruder_spots)
+    np.random.shuffle(o1.intruder_spots)
     intruder_list = []
     for ii in range(intruder_num):
-        new_intruder = Intruder(type,o1.intruder_spots[:,ii])
-        intruder_list.append(new_intruder)
-
+        new_intruder = Intruder(type,o1.intruder_spots[ii,:])
+        #intruder_list.append(new_intruder)
         '''
         for kk 2:number:
             o1.prop.state()
@@ -35,6 +34,8 @@ def main():
 
     #plt.plot(,'bo')
     #plt.show()
+    plt.plot(o1.intruder_spots[:,0],o1.intruder_spots[:,1],'bo')
+    plt.show()
 
 if __name__ == '__main__':
     main()
