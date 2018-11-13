@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 
 def main():
     draw = True
-    intruder_num = 5
+    intruder_num = 19
     type = 'short'          #options are 'short' or 'long'
 
 
@@ -36,7 +36,10 @@ def main():
     #plt.show()
     plt.plot(o1.intruder_spots[:,0],o1.intruder_spots[:,1],'bo')
     for ii in range(intruder_num):
-        plt.plot(intruder_list[ii].states[0],intruder_list[ii].states[1],'ro')
+        n0 = intruder_list[ii].states[0]
+        e0 = intruder_list[ii].states[1]
+        plt.plot(n0,e0,'ro')
+        plt.plot(n0,e0,'k')
     plt.show()
 
 if __name__ == '__main__':
