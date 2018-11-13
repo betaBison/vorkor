@@ -6,6 +6,8 @@ __pycache__/
 
 # specific to vorkor
 Vehicles/__pycache__/
+*/__pycache__/
+*/*/__pycache__/
 
 # matlab
 *.asv
