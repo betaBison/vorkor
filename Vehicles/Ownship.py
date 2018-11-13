@@ -11,14 +11,6 @@ class Ownship(Vehicle):
         num_spots = param.intruder_pos_places
         angles = np.linspace(-np.pi,np.pi-2.0*np.pi/num_spots,num_spots)
         for ii in range(num_spots):
-            ''' Brady's big_ben option
-            new_spot = self.dr*self.Rz(angles[ii])[0,:] + np.array([[0.0,0.0,param.intruder_height]])
-            if ii == 0:
-                self.intruder_spots = new_spot.T
-            else:
-                self.intruder_spots = np.hstack((self.intruder_spots,new_spot.T))
-            '''
-            #new_spot = self.dr*self.Rz(angles[ii])[0,:] + np.array([[0.0,0.0,param.intruder_height]])
             new_spot = self.dr*Rz_I2B(angles[ii])[0,:] + np.array([[0.0,0.0,param.intruder_height]])
             if ii == 0:
                 self.intruder_spots = new_spot

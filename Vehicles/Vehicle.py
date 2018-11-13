@@ -4,11 +4,9 @@ import error_codes
 
 class Vehicle():
     def __init__(self,type):
-        #position = np.zeros((3,1),dtype=float)
-        #velocity = np.zeros((3,1),dtype=float)
-        #self.states = np.vstack((position,velocity))
-        self.states = np.zeros((12,1),dtype=float)
-        self.state_history = np.empty((12,1))
+        #self.states = np.zeros((12,1),dtype=float)
+        #self.state_history = np.empty((12,1),dtype=float)
+        self.states = []
         self.size = 0.0
         if type == 'short':
             self.dr = param.dr_short

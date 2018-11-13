@@ -35,6 +35,8 @@ def main():
     #plt.plot(,'bo')
     #plt.show()
     plt.plot(o1.intruder_spots[:,0],o1.intruder_spots[:,1],'bo')
+    for ii in range(intruder_num):
+        plt.plot(intruder_list[ii].states[0],intruder_list[ii].states[1],'ro')
     plt.show()
 
 if __name__ == '__main__':
