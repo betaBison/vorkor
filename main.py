@@ -9,9 +9,10 @@ import matplotlib.pyplot as plt
 
 ''''
 TODO:
-make an encouter_circle funciton in ownship
+
+
 propagate dynamics correctly
-move prop dynamics to ownship and intruder respectively
+add time to state history
 '''
 
 
@@ -29,23 +30,27 @@ def main():
     for ii in range(intruder_num):
         new_intruder = Intruder(type,o1.intruder_spots[ii,:])
         intruder_list.append(new_intruder)
-    '''
+
     encounter = [True]
+    jj = 0
     while any(encounter):
+
         o1.prop_state()
         encounter = []
         for ii in range(intruder_num):
-            int_list[ii].prop_state()
+            intruder_list[ii].prop_state()
+            encounter.append(o1.encounter_circle(intruder_list[ii].states))
 
-            encounter.append(int_list[ii].encounter)
-
-    '''
+        print(encounter)
+        jj += 1
+        print(jj)
     '''
         if draw:
             graph.update() # try not sending information
             graph = vis(o1,int_list,body inertial frame)
 
     '''
+
     #plt.plot(,'bo')
     #plt.show()
     plt.plot(o1.intruder_spots[:,0],o1.intruder_spots[:,1],'bo')
@@ -54,6 +59,11 @@ def main():
         e0 = intruder_list[ii].states[1]
         plt.plot(n0,e0,'ro')
         plt.plot(n0,e0,'k')
+    plt.figure()
+    plt.plot(o1.state_history[0],o1.state_history[1],'go')
+    for ii in range(intruder_num):
+        plt.plot(intruder_list[ii].state_history[0],intruder_list[ii].state_history[1],'ro')
+        plt.plot(intruder_list[ii].state_history[0][0],intruder_list[ii].state_history[1][0],'bo')
     plt.show()
 
 if __name__ == '__main__':

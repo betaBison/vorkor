@@ -14,7 +14,7 @@ class Intruder(Vehicle):
         self.encounter = True
         for ii in range(len(self.states)):
             self.state_history[ii][0:0] = [self.states[ii]]
-            
+
     def rand_velocity(self):
         # creates randomized intruder velocity
         # p118 [39,250]kn = [20,129]m/s
@@ -31,3 +31,13 @@ class Intruder(Vehicle):
         theta = random.uniform(theta_min,theta_max)
         initial_angle = [0.,0.,theta]
         return initial_angle
+
+    def prop_state(self):
+        vel = self.states[3]
+        ang = self.states[8]
+        self.states[0] += param.dt*vel*np.cos(ang)
+        self.states[1] += param.dt*vel*np.sin(ang)
+        self.states[2] += param.dt*self.states[5]
+        new_index = len(self.state_history[0])
+        for ii in range(len(self.states)):
+            self.state_history[ii][new_index:new_index] = [self.states[ii]]

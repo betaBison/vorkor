@@ -25,4 +25,17 @@ class Ownship(Vehicle):
                 self.intruder_spots = np.vstack((self.intruder_spots,new_spot))
 
     def encounter_circle(self,intruder_state):
-        pass
+        combined = [a_i - b_i for a_i, b_i in zip(self.states[0:2], intruder_state[0:2])]
+        dist = np.linalg.norm(combined)
+        if dist > self.dr:
+            return False
+        else:
+            return True
+
+    def prop_state(self):
+        vel = self.states[3]
+        ang = self.states[8]
+        self.states[0] += param.dt*vel*np.cos(ang)
+        self.states[1] += param.dt*vel*np.sin(ang)
+        for ii in range(len(self.states)):
+            self.state_history[ii][0:0] = [self.states[ii]]

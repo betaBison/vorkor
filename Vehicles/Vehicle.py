@@ -25,6 +25,3 @@ class Vehicle():
             self.hcol = param.hcol_long
         else:
             error_codes.error1()
-
-    def prop_state(self):
-        self.states[0:3] = self.states[0:3] + 3.0
