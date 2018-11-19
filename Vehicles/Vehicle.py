@@ -4,8 +4,7 @@ import error_codes
 
 class Vehicle():
     def __init__(self,type):
-        #self.states = np.zeros((12,1),dtype=float)
-        #self.state_history = np.empty((12,1),dtype=float)
+        self.state_history = [[],[],[],[],[],[],[],[],[],[],[],[]]
         self.states = []
         self.size = 0.0
         if type == 'short':
@@ -28,4 +27,4 @@ class Vehicle():
             error_codes.error1()
 
     def prop_state(self):
-        pass
+        self.states[0:3] = self.states[0:3] + 3.0

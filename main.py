@@ -7,6 +7,13 @@ import random
 import matplotlib.pyplot as plt
 ###
 
+''''
+TODO:
+make an encouter_circle funciton in ownship
+propagate dynamics correctly
+move prop dynamics to ownship and intruder respectively
+'''
+
 
 def main():
     draw = True
@@ -22,16 +29,23 @@ def main():
     for ii in range(intruder_num):
         new_intruder = Intruder(type,o1.intruder_spots[ii,:])
         intruder_list.append(new_intruder)
-        '''
-        for kk 2:number:
-            o1.prop.state()
-            for number intruders:
-                int_list[i].prop.state()
+    '''
+    encounter = [True]
+    while any(encounter):
+        o1.prop_state()
+        encounter = []
+        for ii in range(intruder_num):
+            int_list[ii].prop_state()
+
+            encounter.append(int_list[ii].encounter)
+
+    '''
+    '''
         if draw:
             graph.update() # try not sending information
             graph = vis(o1,int_list,body inertial frame)
-        '''
 
+    '''
     #plt.plot(,'bo')
     #plt.show()
     plt.plot(o1.intruder_spots[:,0],o1.intruder_spots[:,1],'bo')

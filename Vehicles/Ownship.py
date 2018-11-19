@@ -6,6 +6,13 @@ from vmd import *
 class Ownship(Vehicle):
     def __init__(self,type):
         Vehicle.__init__(self,type)
+        self.states[0:3] = [0.,0.,0.]
+        # initial airspeed set to 80kn p.118
+        self.states[3:6] = [41.1556,0.,0.]
+        self.states[6:9] = [0.,0.,0.]
+        self.states[9:12] = [0.,0.,0.]
+        for ii in range(len(self.states)):
+            self.state_history[ii][0:0] = [self.states[ii]]
 
     def intruder_pos_places(self):
         num_spots = param.intruder_pos_places
@@ -16,3 +23,6 @@ class Ownship(Vehicle):
                 self.intruder_spots = new_spot
             else:
                 self.intruder_spots = np.vstack((self.intruder_spots,new_spot))
+
+    def encounter_circle(self,intruder_state):
+        pass

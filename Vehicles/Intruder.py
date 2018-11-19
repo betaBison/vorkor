@@ -10,8 +10,11 @@ class Intruder(Vehicle):
         self.states[0:3] = initial_position
         self.states[3:6] = self.rand_velocity()
         self.states[6:9] = self.rand_angle()
-        print(self.states)
-
+        self.states[9:12] = [0.,0.,0.]
+        self.encounter = True
+        for ii in range(len(self.states)):
+            self.state_history[ii][0:0] = [self.states[ii]]
+            
     def rand_velocity(self):
         # creates randomized intruder velocity
         # p118 [39,250]kn = [20,129]m/s
