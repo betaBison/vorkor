@@ -11,8 +11,9 @@ class Ownship(Vehicle):
         self.states[3:6] = [41.1556,0.,0.]
         self.states[6:9] = [0.,0.,0.]
         self.states[9:12] = [0.,0.,0.]
+        self.state_history[0][0:0] = [self.time]
         for ii in range(len(self.states)):
-            self.state_history[ii][0:0] = [self.states[ii]]
+            self.state_history[ii+1][0:0] = [self.states[ii]]
 
     def intruder_pos_places(self):
         num_spots = param.intruder_pos_places
@@ -33,9 +34,12 @@ class Ownship(Vehicle):
             return True
 
     def prop_state(self):
+        self.time += param.dt
         vel = self.states[3]
         ang = self.states[8]
         self.states[0] += param.dt*vel*np.cos(ang)
         self.states[1] += param.dt*vel*np.sin(ang)
+        new_index = len(self.state_history[0])
+        self.state_history[0][new_index:new_index] = [self.time]
         for ii in range(len(self.states)):
-            self.state_history[ii][0:0] = [self.states[ii]]
+            self.state_history[ii+1][new_index:new_index] = [self.states[ii]]

@@ -4,9 +4,10 @@ import error_codes
 
 class Vehicle():
     def __init__(self,type):
-        self.state_history = [[],[],[],[],[],[],[],[],[],[],[],[]]
+        self.state_history = [[],[],[],[],[],[],[],[],[],[],[],[],[]]
         self.states = []
         self.size = 0.0
+        self.time = 0.0
         if type == 'short':
             self.dr = param.dr_short
             self.dth = param.dth_short
