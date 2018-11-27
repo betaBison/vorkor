@@ -23,6 +23,7 @@ fix how the results are passed to numpy arrays
 propagate dynamics correctly
 compute chord if there is a collision
 show the initial state history for the ownship that colided
+
 '''
 
 
