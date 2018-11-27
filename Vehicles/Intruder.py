@@ -33,7 +33,7 @@ class Intruder(Vehicle):
         initial_angle = [0.,0.,theta]
         return initial_angle
 
-    def prop_state(self):
+    def prop_state(self,ownship_states):
         self.time += param.dt
         vel = self.states[3]
         ang = self.states[8]
@@ -43,4 +43,16 @@ class Intruder(Vehicle):
         new_index = len(self.state_history[0])
         self.state_history[0][new_index:new_index] = [self.time]
         for ii in range(len(self.states)):
-            self.state_history[ii][new_index:new_index] = [self.states[ii]]
+            self.state_history[ii+1][new_index:new_index] = [self.states[ii]]
+        colision = self.boundary(self.states[0:3],ownship_states[0:3],self.dcol,self.hcol)
+        separation = self.boundary(self.states[0:3],ownship_states[0:3],self.dsep,self.hsep)
+        return colision
+
+    def boundary(self,point1,point2,radius,height):
+        #print("distance = ",((point1[0]-point2[0])**2 + (point1[1]-point2[1])**2))
+        #print("radius = ",radius**2)
+        if ((point1[0]-point2[0])**2 + (point1[1]-point2[1])**2) <= radius**2:
+            if abs(point1[2]-point2[2]) <= height:
+                return True
+        else:
+            return False
