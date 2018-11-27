@@ -2,6 +2,7 @@ from Intruder import Intruder
 from Ownship import Ownship
 import numpy as np
 import random
+from Visualization import Visualization as vis
 
 ### Debugging
 import matplotlib.pyplot as plt
@@ -20,10 +21,11 @@ compute chord if there is a collision
 
 
 def main():
-    draw = False
-    intruder_num = 19
-    type = 'short'          #options are 'short' or 'long'
-    simulations = 10
+    draw = True
+    intruder_num = 18
+    type = 'short'                  #options are 'short' or 'long'
+    simulations = 1
+    reference_frame = 'inertial'    # options are 'inertial' or 'body'
 
 
     o1 = Ownship(type)
@@ -39,6 +41,9 @@ def main():
             new_intruder = Intruder(type,o1.intruder_spots[ii,:])
             intruder_list.append(new_intruder)
 
+        if draw == True:
+            graph = vis(o1,intruder_list,reference_frame)
+
         encounter = [True]
         colision = [False]
         while any(encounter) and not any(colision):
@@ -49,15 +54,12 @@ def main():
                 intruder_list[ii].prop_state(o1.states)
                 colision.append(intruder_list[ii].colision)
                 encounter.append(o1.encounter_circle(intruder_list[ii].states))
+            if draw == True:
+                graph.update(o1,intruder_list)
         separation = []
         for ii in range(intruder_num):
             separation.append(intruder_list[ii].separation)
 
-        '''
-            if draw:
-                graph = vis(o1,int_list,body inertial frame)
-                graph.update() # try not sending information
-        '''
         '''
         if draw == True:
             #plt.plot(,'bo')
@@ -87,7 +89,6 @@ def main():
         else:
             print(kk,o1.state_history[0][-1],any(colision),sum(separation))
         #results.append((kk,o1.state_history[0][-1],any(colision),sum(separation)))
-
     #print(results)
 
 
