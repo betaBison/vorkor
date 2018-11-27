@@ -51,10 +51,10 @@ class Intruder(Vehicle):
             self.separation = self.boundary(self.states[0:3],ownship_states[0:3],self.dsep,self.hsep)
 
     def boundary(self,point1,point2,radius,height):
-        #print("distance = ",((point1[0]-point2[0])**2 + (point1[1]-point2[1])**2))
-        #print("radius = ",radius**2)
         if ((point1[0]-point2[0])**2 + (point1[1]-point2[1])**2) <= radius**2:
             if abs(point1[2]-point2[2]) <= height:
                 return True
+            else:
+                return False
         else:
             return False

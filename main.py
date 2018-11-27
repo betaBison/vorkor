@@ -13,7 +13,6 @@ change reload
     add reload syntax for each library
 propagate dynamics correctly
 compute chord if there is a collision
-show the initial state history for the ownship that colided
 '''
 
 
@@ -42,24 +41,23 @@ def main():
 
         encounter = [True]
         colision = [False]
-        jj = 0
-        #while jj < 10:
         while any(encounter) and not any(colision):
             o1.prop_state()
             encounter = []
             colision = []
-            separation = []
             for ii in range(intruder_num):
                 intruder_list[ii].prop_state(o1.states)
                 colision.append(intruder_list[ii].colision)
                 encounter.append(o1.encounter_circle(intruder_list[ii].states))
-                separation.append(intruder_list[ii].separation)
-            jj += 1
+        separation = []
+        for ii in range(intruder_num):
+            separation.append(intruder_list[ii].separation)
 
         '''
             if draw:
                 graph = vis(o1,int_list,body inertial frame)
                 graph.update() # try not sending information
+        '''
         '''
         if draw == True:
             #plt.plot(,'bo')
@@ -76,15 +74,19 @@ def main():
                 plt.plot(intruder_list[ii].state_history[1],intruder_list[ii].state_history[2],'ro')
                 plt.plot(intruder_list[ii].state_history[1][0],intruder_list[ii].state_history[2][0],'bo')
             plt.show()
+        '''
+
 
         if any(colision) == True:
-            #col_i = [i for i, x in enumerate(colision) if x]
+            for ll in range(intruder_num):
+                if intruder_list[ll].colision == True:
+                    print(kk,o1.state_history[0][-1],any(colision),sum(separation))
+                    history = np.array(intruder_list[ll].state_history)
+                    print(history[1:7,0])
+                    break
+        else:
             print(kk,o1.state_history[0][-1],any(colision),sum(separation))
-            #for ll in range(1,7):
-            #print(intruder_list[col_i].state_history[ll][0])
-        if any(colision) == False:
-            print(kk,o1.state_history[0][-1],any(colision),sum(separation))
-        results.append((kk,o1.state_history[0][-1],any(colision),sum(separation)))
+        #results.append((kk,o1.state_history[0][-1],any(colision),sum(separation)))
 
     #print(results)
 
