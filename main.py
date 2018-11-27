@@ -1,14 +1,7 @@
-from importlib import reload
-import Vehicles
-reload(Vehicles)
-
-
-from Vehicles import Intruder
-from Vehicles import Ownship
+from Intruder import Intruder
+from Ownship import Ownship
 import numpy as np
 import random
-
-
 
 ### Debugging
 import matplotlib.pyplot as plt

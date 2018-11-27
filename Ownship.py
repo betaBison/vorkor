@@ -1,4 +1,4 @@
-from Vehicles import Vehicle
+from Vehicle import Vehicle
 import param
 import numpy as np
 from vmd import *
