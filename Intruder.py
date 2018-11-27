@@ -12,6 +12,8 @@ class Intruder(Vehicle):
         self.states[6:9] = self.rand_angle()
         self.states[9:12] = [0.,0.,0.]
         self.encounter = True
+        self.colision = False
+        self.separation = False
         self.state_history[0][0:0] = [self.time]
         for ii in range(len(self.states)):
             self.state_history[ii+1][0:0] = [self.states[ii]]
@@ -44,9 +46,9 @@ class Intruder(Vehicle):
         self.state_history[0][new_index:new_index] = [self.time]
         for ii in range(len(self.states)):
             self.state_history[ii+1][new_index:new_index] = [self.states[ii]]
-        colision = self.boundary(self.states[0:3],ownship_states[0:3],self.dcol,self.hcol)
-        separation = self.boundary(self.states[0:3],ownship_states[0:3],self.dsep,self.hsep)
-        return colision
+        self.colision = self.boundary(self.states[0:3],ownship_states[0:3],self.dcol,self.hcol)
+        if self.separation == False:
+            self.separation = self.boundary(self.states[0:3],ownship_states[0:3],self.dsep,self.hsep)
 
     def boundary(self,point1,point2,radius,height):
         #print("distance = ",((point1[0]-point2[0])**2 + (point1[1]-point2[1])**2))
