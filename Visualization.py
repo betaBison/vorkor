@@ -11,6 +11,7 @@ import pyqtgraph as pg
 from PyQt5 import QtWidgets
 from math import *
 from visMods import *
+import error_codes
 
 ####### Debugging
 import time
@@ -26,6 +27,9 @@ class Visualization(QtCore.QThread):
         self.reference_frame = reference_frame
         self.intruder_num = len(intruders)
         self.intr_states = np.zeros((self.intruder_num,3),dtype=float)
+        if self.reference_frame != 'body' and self.reference_frame != 'inertial':
+            error_codes.error3()
+
 
         for ii in range(self.intruder_num):
             self.intr_states[ii,0:3] = self.intruders[ii].states[0:3]
@@ -163,7 +167,7 @@ class Visualization(QtCore.QThread):
             self.itr_3d[k] = gl.GLMeshItem(meshdata=sphere_object, smooth=False, drawFaces=True, drawEdges=False, color=(0,1.0-float(k)/self.intruder_num,float(k)/self.intruder_num,1) )
             self.w.addItem(self.itr_3d[k])
             # Translate to initial position
-            self.itr_3d[k].translate(self.intruders[k].states[0],self.intruders[k].states[1],self.intruders[k].states[2])
+            self.itr_3d[k].translate(self.intr_states[k,0],self.intr_states[k,1],self.intr_states[k,2])
 
 
     def update(self,ownship,intruders):
@@ -173,8 +177,9 @@ class Visualization(QtCore.QThread):
         self.own_states[0] = ownship.states[0]
         self.own_states[1] = ownship.states[1]
         self.own_states[2] = ownship.states[2]
-        for k in range(self.own_items):
-            self.own_3d[k].translate(own_dx,own_dy,own_dz)
+        if self.reference_frame == 'inertial':
+            for k in range(self.own_items):
+                self.own_3d[k].translate(own_dx,own_dy,own_dz)
 
         for k in range(self.intruder_num):
             intr_dx = self.intr_states[k,0] - intruders[k].states[0]
@@ -183,7 +188,11 @@ class Visualization(QtCore.QThread):
             self.intr_states[k,0] = intruders[k].states[0]
             self.intr_states[k,1] = intruders[k].states[1]
             self.intr_states[k,2] = intruders[k].states[2]
-            self.itr_3d[k].translate(intr_dx,intr_dy,intr_dz)
+            if self.reference_frame == 'inertial':
+                self.itr_3d[k].translate(intr_dx,intr_dy,intr_dz)
+            else:
+                self.itr_3d[k].translate(intr_dx-own_dx,intr_dy-own_dy,intr_dz-own_dz)
+
 
             '''
             if ((self.itr_pts[self.step,0,k]-self.own_pts[self.step,0])**2 + (self.itr_pts[self.step,1,k]-self.own_pts[self.step,1])**2) <= self.dcol**2 and abs(self.itr_pts[self.step,2,k]-self.own_pts[self.step,2]) <= self.hcol:
