@@ -10,9 +10,17 @@ import matplotlib.pyplot as plt
 
 ''''
 TODO:
+change from inertial to body reference_frame
+change to NED from xyz
+
+add colision coloring to cylinders
+test turning angles with the ownship
+
 change reload
     add reload syntax for each library
+
 propagate dynamics correctly
+
 compute chord if there is a collision
 '''
 
@@ -26,7 +34,6 @@ def main():
     type = 'short'                  #options are 'short' or 'long'
     simulations = 1
     reference_frame = 'inertial'    # options are 'inertial' or 'body'
-
 
     o1 = Ownship(type)
     o1.intruder_pos_places()
