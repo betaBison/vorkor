@@ -1,8 +1,6 @@
 # #!/usr/bin/python3
 
-# Latis MoDules     -->     lmd name space
-# TODO:
-# add angle wrapping
+# Vorkor MoDules    -->     vmd name space
 
 import numpy as np
 
@@ -23,6 +21,10 @@ ellipse_frst_ecc_sq = 1.0 - earth_semi_minor_major_sq
 
 r2d = 180.0 / np.pi
 d2r = np.pi / 180.0
+inv_360 = 1.0 / 360.0
+inv_180 = 1.0 / 180.0
+inv_pi = 1.0 / np.pi
+inv_2pi = 0.5 / np.pi
 
 i_vec = np.array( [ 1, 0, 0 ] )
 j_vec = np.array( [ 0, 1, 0 ] )
@@ -33,6 +35,23 @@ enu2ned_mat = np.array( [ [0,1,0], [1,0,0], [0,0,-1] ] )
 unit_mat = np.array( [ [1,0,0], [0,1,0], [0,0,1] ] )
 
 
+def deg_wrap_180( angle ):
+    angle -= 360.0 * np.floor((angle + 180.) * inv_360)
+    return angle
+#
+def deg_wrap_360( angle ):
+    angle -= 360.0 * np.floor(angle * inv_360)
+    return angle
+#
+
+def rad_wrap_pi( angle ):
+    angle -= 2*np.pi * np.floor((angle + np.pi) * inv_2pi)
+    return angle
+#
+def rad_wrap_2pi( angle ):
+    angle -= 2*np.pi * np.floor(angle * inv_2pi)
+    return angle
+#
 
 # ======================================
 # ======================================
@@ -77,7 +96,7 @@ def ecef2enu( p_xyz, lat, lon ):
 
     p_enu = ecef2enu_mat @ p_xyz
 
-    p_ned = lmd.enu2ned_mat @ p_enu
+    p_ned = enu2ned_mat @ p_enu
 
     return p_ned
 #
@@ -89,6 +108,8 @@ def radar2base( ):
     #
 #
 
+# ======================================
+# ======================================
 # ======================================
 
 def Rx_I2B( phi ):
