@@ -12,6 +12,7 @@ from PyQt5 import QtWidgets
 from math import *
 from visMods import *
 import error_codes
+import vmd
 
 ####### Debugging
 import time
@@ -22,17 +23,18 @@ class Visualization(QtCore.QThread):
     def __init__(self,ownship,intruders,reference_frame):
         QtCore.QThread.__init__(self)
         self.ownship = ownship
-        self.own_states = self.ownship.states[0:3]
+        self.own_states = np.matmul(vmd.enu2ned_mat,np.array(self.ownship.state_history[1:4]))
         self.intruders = intruders
         self.reference_frame = reference_frame
         self.intruder_num = len(intruders)
-        self.intr_states = np.zeros((self.intruder_num,3),dtype=float)
+        self.total_steps = len(self.ownship.state_history[0])
+        self.step = 0
+        self.intr_states = np.zeros((3,self.total_steps,self.intruder_num),dtype=float)
         if self.reference_frame != 'body' and self.reference_frame != 'inertial':
             error_codes.error3()
 
-
         for ii in range(self.intruder_num):
-            self.intr_states[ii,0:3] = self.intruders[ii].states[0:3]
+            self.intr_states[:,:,ii] = np.matmul(vmd.enu2ned_mat,np.array(self.intruders[ii].state_history[1:4]))
 
         # Colision variables
         self.collision_flag_timer = 0
@@ -66,11 +68,11 @@ class Visualization(QtCore.QThread):
 
         # add all three axis
         xaxis_pts = np.array([[0.0,0.0,0.0],
-                        [1.1*self.ownship.dr,0.0,0.0]])
+                        [0.0,1.1*self.ownship.dr,0.0]])
         xaxis = gl.GLLinePlotItem(pos=xaxis_pts,color=pg.glColor('r'),width=3.0)
         self.w.addItem(xaxis)
         yaxis_pts = np.array([[0.0,0.0,0.0],
-                        [0.0,-1.1*self.ownship.dr,0.0]])
+                        [1.1*self.ownship.dr,0.0,0.0]])
         yaxis = gl.GLLinePlotItem(pos=yaxis_pts,color=pg.glColor('g'),width=3.0)
         self.w.addItem(yaxis)
         zaxis_pts = np.array([[0.0,0.0,0.0],
@@ -111,7 +113,7 @@ class Visualization(QtCore.QThread):
                 self.own_3d[l].rotate(rotate_angle,0,0,1)
                 rotate_angle += 90
             self.w.addItem(self.own_3d[l])
-            self.own_3d[l].translate(self.ownship.states[0],self.ownship.states[1],self.ownship.states[2])
+            self.own_3d[l].translate(self.own_states[0,0],self.own_states[1,0],self.own_states[2,0])
         for l in range(9,(self.own_items)):
             if l == 9:
                 radius = self.ownship.dcol
@@ -158,7 +160,7 @@ class Visualization(QtCore.QThread):
                     if i == 1:
                         self.own_3d[l+i].setVisible(False)
                     self.own_3d[l+i].translate(0.0,0.0,-height/2.0)
-                    self.own_3d[l+i].translate(self.ownship.states[0],self.ownship.states[1],self.ownship.states[2])
+                    self.own_3d[l+i].translate(self.own_states[0,0],self.own_states[1,0],self.own_states[2,0])
 
         # Initialize and import paths of intruder
         self.itr_3d = np.empty((self.intruder_num),dtype=object)
@@ -167,80 +169,86 @@ class Visualization(QtCore.QThread):
             self.itr_3d[k] = gl.GLMeshItem(meshdata=sphere_object, smooth=False, drawFaces=True, drawEdges=False, color=(0,1.0-float(k)/self.intruder_num,float(k)/self.intruder_num,1) )
             self.w.addItem(self.itr_3d[k])
             # Translate to initial position
-            self.itr_3d[k].translate(self.intr_states[k,0],self.intr_states[k,1],self.intr_states[k,2])
+            self.itr_3d[k].translate(self.intr_states[0,0,k],self.intr_states[1,0,k],self.intr_states[2,0,k])
 
 
-    def update(self,ownship,intruders):
-        own_dx = self.own_states[0] - ownship.states[0]
-        own_dy = self.own_states[1] - ownship.states[1]
-        own_dz = self.own_states[2] - ownship.states[2]
-        self.own_states[0] = ownship.states[0]
-        self.own_states[1] = ownship.states[1]
-        self.own_states[2] = ownship.states[2]
-        if self.reference_frame == 'inertial':
-            for k in range(self.own_items):
-                self.own_3d[k].translate(own_dx,own_dy,own_dz)
-
-        for k in range(self.intruder_num):
-            intr_dx = self.intr_states[k,0] - intruders[k].states[0]
-            intr_dy = self.intr_states[k,1] - intruders[k].states[1]
-            intr_dz = self.intr_states[k,2] - intruders[k].states[2]
-            self.intr_states[k,0] = intruders[k].states[0]
-            self.intr_states[k,1] = intruders[k].states[1]
-            self.intr_states[k,2] = intruders[k].states[2]
+    def update(self):
+        if self.step < self.total_steps-1:
+            self.step += 1
+            own_dx = self.own_states[0,self.step] - self.own_states[0,self.step-1]
+            own_dy = self.own_states[1,self.step] - self.own_states[1,self.step-1]
+            own_dz = self.own_states[2,self.step] - self.own_states[2,self.step-1]
             if self.reference_frame == 'inertial':
-                self.itr_3d[k].translate(intr_dx,intr_dy,intr_dz)
+                for k in range(self.own_items):
+                    self.own_3d[k].translate(own_dx,own_dy,own_dz)
+
+            for k in range(self.intruder_num):
+                intr_dx = self.intr_states[0,self.step,k] - self.intr_states[0,self.step-1,k]
+                intr_dy = self.intr_states[1,self.step,k] - self.intr_states[1,self.step-1,k]
+                intr_dz = self.intr_states[2,self.step,k] - self.intr_states[2,self.step-1,k]
+                if self.reference_frame == 'inertial':
+                    self.itr_3d[k].translate(intr_dx,intr_dy,intr_dz)
+                else:
+                    self.itr_3d[k].translate(intr_dx-own_dx,intr_dy-own_dy,intr_dz-own_dz)
+                for k in range(self.intruder_num):
+                    if ((self.intr_states[0,self.step,k]-self.own_states[0,self.step])**2 + (self.intr_states[1,self.step,k]-self.own_states[1,self.step])**2) <= self.ownship.dcol**2 and abs(self.intr_states[2,self.step,k]-self.own_states[2,self.step]) <= self.ownship.hcol:
+                         in_circle = True
+                         if in_circle == True and self.intruder_status[k,0] == False:
+                            self.collision_flag_timer = 1
+                            self.intruder_status[k,0] = True
+                            self.own_3d[10].setVisible(True)
+                            #print("collision")
+                         if in_circle == False and self.intruder_status[k] == True:
+                             self.intruder_status[k,0] == False
+                    if ((self.intr_states[0,self.step,k]-self.own_states[0,self.step])**2 + (self.intr_states[1,self.step,k]-self.own_states[1,self.step])**2) <= self.ownship.dsep**2 and abs(self.intr_states[2,self.step,k]-self.own_states[2,self.step]) <= self.ownship.hsep:
+                         in_circle = True
+                         if in_circle == True and self.intruder_status[k,1] == False:
+                            self.separation_flag_timer = 1
+                            self.intruder_status[k,1] = True
+                            self.own_3d[14].setVisible(True)
+                            #print("separation")
+                         if in_circle == False and self.intruder_status[k,1] == True:
+                             self.intruder_status[k,1] == False
+                    if ((self.intr_states[0,self.step,k]-self.own_states[0,self.step])**2 + (self.intr_states[1,self.step,k]-self.own_states[1,self.step])**2) <= self.ownship.dth**2 and abs(self.intr_states[2,self.step,k]-self.own_states[2,self.step]) <= self.ownship.hth:
+                         in_circle = True
+                         if in_circle == True and self.intruder_status[k,2] == False:
+                            self.threshold_flag_timer = 1
+                            self.intruder_status[k,2] = True
+                            self.own_3d[18].setVisible(True)
+                            #print("threshold")
+                         if in_circle == False and self.intruder_status[k,2] == True:
+                             self.intruder_status[k,2] == False
+                if self.separation_flag_timer > 0:
+                    self.separation_flag_timer += 1
+                    if self.separation_flag_timer == 60:
+                        self.separation_flag_timer = 0
+                        self.own_3d[14].setVisible(False)
+                if self.collision_flag_timer > 0:
+                    self.collision_flag_timer += 1
+                    if self.collision_flag_timer == 60:
+                        self.collision_flag_timer = 0
+                        self.own_3d[10].setVisible(False)
+                if self.threshold_flag_timer > 0:
+                    self.threshold_flag_timer += 1
+                    if self.threshold_flag_timer == 60:
+                        self.threshold_flag_timer = 0
+                        self.own_3d[18].setVisible(False)
+        else:
+            if self.reference_frame == 'inertial':
+                for ii in range(self.own_items):
+                    self.own_3d[ii].translate(self.own_states[0,0]-self.own_states[0,self.step],
+                                              self.own_states[1,0]-self.own_states[1,self.step],
+                                              self.own_states[2,0]-self.own_states[2,self.step])
+                for ii in range(self.intruder_num):
+                    self.itr_3d[ii].translate(self.intr_states[0,0,ii]-self.intr_states[0,self.step,ii],
+                                              self.intr_states[1,0,ii]-self.intr_states[1,self.step,ii],
+                                              self.intr_states[2,0,ii]-self.intr_states[2,self.step,ii])
             else:
-                self.itr_3d[k].translate(intr_dx-own_dx,intr_dy-own_dy,intr_dz-own_dz)
-
-
-            '''
-            if ((self.itr_pts[self.step,0,k]-self.own_pts[self.step,0])**2 + (self.itr_pts[self.step,1,k]-self.own_pts[self.step,1])**2) <= self.dcol**2 and abs(self.itr_pts[self.step,2,k]-self.own_pts[self.step,2]) <= self.hcol:
-                 in_circle = True
-                 if in_circle == True and self.intruder_status[k,0] == False:
-                    self.collision_flag_timer = 1
-                    self.intruder_status[k,0] = True
-                    self.own_3d[10].setVisible(True)
-                    self.collision_count += 1
-                    #print("collision")
-                 if in_circle == False and self.intruder_status[k] == True:
-                     self.intruder_status[k,0] == False
-            if ((self.itr_pts[self.step,0,k]-self.own_pts[self.step,0])**2 + (self.itr_pts[self.step,1,k]-self.own_pts[self.step,1])**2) <= self.dsep**2 and abs(self.itr_pts[self.step,2,k]-self.own_pts[self.step,2]) <= self.hsep:
-                 in_circle = True
-                 if in_circle == True and self.intruder_status[k,1] == False:
-                    self.separation_flag_timer = 1
-                    self.intruder_status[k,1] = True
-                    self.own_3d[14].setVisible(True)
-                    self.separation_count += 1
-                    #print("separation")
-                 if in_circle == False and self.intruder_status[k,1] == True:
-                     self.intruder_status[k,1] == False
-            if ((self.itr_pts[self.step,0,k]-self.own_pts[self.step,0])**2 + (self.itr_pts[self.step,1,k]-self.own_pts[self.step,1])**2) <= self.dth**2 and abs(self.itr_pts[self.step,2,k]-self.own_pts[self.step,2]) <= self.hth:
-                 in_circle = True
-                 if in_circle == True and self.intruder_status[k,2] == False:
-                    self.threshold_flag_timer = 1
-                    self.intruder_status[k,2] = True
-                    self.own_3d[18].setVisible(True)
-                    self.threshold_count += 1
-                    #print("threshold")
-                 if in_circle == False and self.intruder_status[k,2] == True:
-                     self.intruder_status[k,2] == False
-            if self.separation_flag_timer > 0:
-                self.separation_flag_timer += 1
-                if self.separation_flag_timer == 6:
-                    self.separation_flag_timer = 0
-                    self.own_3d[14].setVisible(False)
-            if self.collision_flag_timer > 0:
-                self.collision_flag_timer += 1
-                if self.collision_flag_timer == 6:
-                    self.collision_flag_timer = 0
-                    self.own_3d[10].setVisible(False)
-            if self.threshold_flag_timer > 0:
-                self.threshold_flag_timer += 1
-                if self.threshold_flag_timer == 6:
-                    self.threshold_flag_timer = 0
-                    self.own_3d[18].setVisible(False)
-            '''
+                for ii in range(self.intruder_num):
+                    self.itr_3d[ii].translate((self.intr_states[0,0,ii]-self.intr_states[0,self.step,ii])-(self.own_states[0,0]-self.own_states[0,self.step]),
+                                              (self.intr_states[1,0,ii]-self.intr_states[1,self.step,ii])-(self.own_states[1,0]-self.own_states[1,self.step]),
+                                              (self.intr_states[2,0,ii]-self.intr_states[2,self.step,ii])-(self.own_states[2,0]-self.own_states[2,self.step]))
+            self.step = 0
 
         self.app.processEvents()
 

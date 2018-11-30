@@ -39,7 +39,7 @@ class Ownship(Vehicle):
         ang = self.states[8]
         self.states[0] += param.dt*vel*np.cos(ang)
         #self.states[1] += param.dt*vel*np.sin(ang)
-        self.states[1] = 300.0*param.dt*vel*np.sin(self.time)
+        self.states[1] = 30.0*param.dt*vel*np.sin(self.time)
         new_index = len(self.state_history[0])
         self.state_history[0][new_index:new_index] = [self.time]
         for ii in range(len(self.states)):
