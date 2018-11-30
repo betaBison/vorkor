@@ -30,7 +30,7 @@ compute chord if there is a collision
 def main():
     draw = True
     intruder_num = 20
-    type = 'long'                  #options are 'short' or 'long'
+    type = 'short'                  #options are 'short' or 'long'
     simulations = 1
     reference_frame = 'body'    # options are 'inertial' or 'body'
 
