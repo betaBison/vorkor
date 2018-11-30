@@ -94,7 +94,7 @@ class Visualization(QtCore.QThread):
             if l == 0:
                 self.own_3d[l] = gl.GLMeshItem(meshdata=sphere_object, smooth=True, drawFaces=True, drawEdges=False, color=(1,0,0,1))
             elif l < 5:
-                if l <= 2:
+                if l == 1 or l==4:
                     cyl_color = pg.glColor('r') # front of quad
                 else:
                     cyl_color = pg.glColor('g') # back of quad
@@ -103,7 +103,7 @@ class Visualization(QtCore.QThread):
                 self.own_3d[l].rotate(rotate_angle,0,0,1)
                 rotate_angle += 90
             else:
-                if l <= 6:
+                if l == 5 or l == 8:
                     cyl_color = pg.glColor('r') # front of quad
                 else:
                     cyl_color = pg.glColor('g') # back of quad

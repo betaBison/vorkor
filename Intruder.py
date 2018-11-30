@@ -14,6 +14,7 @@ class Intruder(Vehicle):
         self.encounter = True
         self.colision = False
         self.separation = False
+        self.threshold = False
         self.state_history[0][0:0] = [self.time]
         for ii in range(len(self.states)):
             self.state_history[ii+1][0:0] = [self.states[ii]]
@@ -49,6 +50,8 @@ class Intruder(Vehicle):
         self.colision = self.boundary(self.states[0:3],ownship_states[0:3],self.dcol,self.hcol)
         if self.separation == False:
             self.separation = self.boundary(self.states[0:3],ownship_states[0:3],self.dsep,self.hsep)
+        if self.threshold == False:
+            self.threshold = self.boundary(self.states[0:3],ownship_states[0:3],self.dth,self.hth)
 
     def boundary(self,point1,point2,radius,height):
         if ((point1[0]-point2[0])**2 + (point1[1]-point2[1])**2) <= radius**2:
