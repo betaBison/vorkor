@@ -41,7 +41,7 @@ compute chord if there is a collision
 
 
 def main():
-    draw = True
+    draw = False
     intruder_num = 20
     type = 'short'                  #options are 'short' or 'long'
     simulations = 1
@@ -60,7 +60,7 @@ def main():
         # for ii in range(intruder_num):
         #     new_intruder = Intruder(type,o1.intruder_spots[ii,:])
         #     intruder_list.append(new_intruder)
-        # #
+        # #enu2ned_mat
         # set_trace()
 
         encounter = [True]
