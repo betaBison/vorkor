@@ -25,11 +25,8 @@ import matplotlib.pyplot as plt
 TODO:
 
 fix bug where cylinders only turn white on the first run
-test turning angles with the ownship
-Go through thesis again
 
-change reload
-    add reload syntax for each library
+Go through thesis again
 
 propagate dynamics correctly
 
@@ -41,7 +38,7 @@ compute chord if there is a collision
 
 
 def main():
-    draw = False
+    draw = True
     intruder_num = 20
     type = 'short'                  #options are 'short' or 'long'
     simulations = 1
