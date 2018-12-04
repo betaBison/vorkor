@@ -24,7 +24,8 @@ class Intruder(Vehicle):
         # p118 [39,250]kn = [20,129]m/s
         speed = random.uniform(20.,129.)
         # p109 climb rate, [-500,500]ft/min = [-2.6,2.6]m/s
-        climb = random.uniform(-2.6,2.6)
+        #climb = random.uniform(-2.6,2.6)
+        climb = 0.0
         return [speed,0.,climb]
 
     def rand_angle(self):

@@ -5,12 +5,15 @@ from importlib import reload
 import Intruder
 import Ownship
 import Visualization
+import voronoiMagic
 reload(Intruder)
 reload(Ownship)
 reload(Visualization)
+reload(voronoiMagic)
 from Intruder import Intruder
 from Ownship import Ownship
 from Visualization import Visualization as vis
+from voronoiMagic import VoronoiMagic as Voronoi
 
 
 import numpy as np
@@ -27,7 +30,10 @@ TODO:
 fix bug where cylinders only turn white on the first run
 
 Go through thesis again
-
+    What are acutal height/diamter dimensions
+    What is the goal point?
+    Do the intruders climb?
+    Will we climb?
 propagate dynamics correctly
 
 compute chord if there is a collision
@@ -95,6 +101,8 @@ def main():
     #print(results)
 
     if draw == True:# and any(colision)==True:
+        voronoi = Voronoi(o1,intruder_list)
+        voronoi.graph()
         graph = vis(o1,intruder_list,reference_frame)
         while(True):
             graph.update()
