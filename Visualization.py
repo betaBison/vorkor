@@ -13,6 +13,7 @@ from math import *
 from visMods import *
 import error_codes
 import vmd
+from voronoiMagic import VoronoiMagic as VM
 
 ####### Debugging
 import time
@@ -176,6 +177,9 @@ class Visualization(QtCore.QThread):
                         self.own_3d[l+i].setVisible(False)
                     self.own_3d[l+i].translate(0.0,0.0,-height/2.0)
                     self.own_3d[l+i].translate(self.own_states[0,0],self.own_states[1,0],self.own_states[2,0])
+        #for ii in range(13,21):
+        #    self.own_3d[ii].setVisible(False)
+
 
         # Initialize and import paths of intruder
         self.itr_3d = np.empty((self.intruder_num),dtype=object)
@@ -185,7 +189,12 @@ class Visualization(QtCore.QThread):
             self.w.addItem(self.itr_3d[k])
             # Translate to initial position
             self.itr_3d[k].translate(self.intr_states[0,0,k],self.intr_states[1,0,k],self.intr_states[2,0,k])
-
+        # VoronoiMagic
+        self.voronoi = VM(self.ownship,self.intruders)
+        self.voronoi.graph(self.step)
+        vm_pts = self.voronoi.E
+        self.vm = gl.GLLinePlotItem(pos=vm_pts,color=pg.glColor('w'),width=1.0,mode='lines')
+        self.w.addItem(self.vm)
 
     def update(self):
         if self.step < self.total_steps-1:
@@ -194,6 +203,10 @@ class Visualization(QtCore.QThread):
             own_dy = self.own_states[1,self.step] - self.own_states[1,self.step-1]
             own_dz = self.own_states[2,self.step] - self.own_states[2,self.step-1]
             self.own_theta = degrees(atan2(own_dy,own_dx))
+            # VoronoiMagic
+            self.voronoi.graph(self.step)
+            vm_pts = self.voronoi.E
+            self.vm.setData(pos=vm_pts)
             if self.reference_frame == 'inertial':
                 for k in range(self.own_items):
                     self.own_3d[k].translate(-self.own_states[0,self.step-1],
@@ -203,6 +216,8 @@ class Visualization(QtCore.QThread):
                     self.own_3d[k].translate(self.own_states[0,self.step],
                                              self.own_states[1,self.step],
                                              self.own_states[2,self.step])
+
+
             for k in range(self.intruder_num):
                 if self.reference_frame == 'inertial':
                     intr_dx = self.intr_states[0,self.step,k] - self.intr_states[0,self.step-1,k]
@@ -263,7 +278,12 @@ class Visualization(QtCore.QThread):
                     if self.threshold_flag_timer == 60:
                         self.threshold_flag_timer = 0
                         self.own_3d[18].setVisible(False)
-            self.own_rotate = self.own_theta
+            if self.reference_frame != 'inertial':
+                self.vm.rotate(self.own_rotate,0,0,1)
+                self.vm.translate(self.own_states[0,self.step-1],self.own_states[1,self.step-1],0)
+                self.vm.translate(-self.own_states[0,self.step],-self.own_states[1,self.step],0)
+                self.vm.rotate(-self.own_theta,0,0,1)
+
 
         else:
             if self.reference_frame == 'inertial':
@@ -276,6 +296,9 @@ class Visualization(QtCore.QThread):
                                               self.intr_states[1,0,ii]-self.intr_states[1,self.step,ii],
                                               self.intr_states[2,0,ii]-self.intr_states[2,self.step,ii])
             else:
+                self.vm.rotate(self.own_rotate,0,0,1)
+                self.vm.translate(self.own_states[0,self.step],self.own_states[1,self.step],0)
+
                 for ii in range(self.intruder_num):
                     self.itr_3d[ii].rotate(self.own_rotate,0,0,1)
                     self.itr_3d[ii].translate(-self.dif_dx[ii],-self.dif_dy[ii],0)
@@ -284,7 +307,7 @@ class Visualization(QtCore.QThread):
                     self.itr_3d[ii].translate(self.dif_dx[ii],self.dif_dy[ii],0.0)
                     self.own_theta = 0
             self.step = 0
-
+        self.own_rotate = self.own_theta
         self.app.processEvents()
 
 

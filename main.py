@@ -101,13 +101,13 @@ def main():
     #print(results)
 
     if draw == True:# and any(colision)==True:
-        voronoi = Voronoi(o1,intruder_list)
-        voronoi.graph()
-        '''
+        #voronoi = Voronoi(o1,intruder_list)
+        #voronoi.graph()
+
         graph = vis(o1,intruder_list,reference_frame)
         while(True):
             graph.update()
-        '''
+
         #
     #
 if __name__ == '__main__':
