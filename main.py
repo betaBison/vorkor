@@ -48,7 +48,7 @@ def main():
     intruder_num = 20
     type = 'short'                  #options are 'short' or 'long'
     simulations = 1
-    reference_frame = 'body'    # options are 'inertial' or 'body'
+    reference_frame = 'inertial'    # options are 'inertial' or 'body'
 
     o1 = Ownship(type)
     o1.intruder_pos_places()

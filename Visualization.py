@@ -46,6 +46,7 @@ class Visualization(QtCore.QThread):
         self.own_rotate = 0
         self.dif_dx = np.zeros((self.intruder_num,1),dtype=float)
         self.dif_dy = np.zeros((self.intruder_num,1),dtype=float)
+        self.voronoi_made = False
 
         pg.setConfigOptions(antialias=True)
         self.app = QtGui.QApplication([])
@@ -189,12 +190,7 @@ class Visualization(QtCore.QThread):
             self.w.addItem(self.itr_3d[k])
             # Translate to initial position
             self.itr_3d[k].translate(self.intr_states[0,0,k],self.intr_states[1,0,k],self.intr_states[2,0,k])
-        # VoronoiMagic
-        self.voronoi = VM(self.ownship,self.intruders)
-        self.voronoi.graph(self.step)
-        vm_pts = self.voronoi.E
-        self.vm = gl.GLLinePlotItem(pos=vm_pts,color=pg.glColor('w'),width=1.0,mode='lines')
-        self.w.addItem(self.vm)
+
 
     def update(self):
         if self.step < self.total_steps-1:
@@ -204,9 +200,23 @@ class Visualization(QtCore.QThread):
             own_dz = self.own_states[2,self.step] - self.own_states[2,self.step-1]
             self.own_theta = degrees(atan2(own_dy,own_dx))
             # VoronoiMagic
-            self.voronoi.graph(self.step)
-            vm_pts = self.voronoi.E
-            self.vm.setData(pos=vm_pts)
+            if self.step == 5 and self.voronoi_made == False:
+                # VoronoiMagic
+                self.voronoi = VM(self.ownship,self.intruders)
+                self.voronoi.graph(self.step)
+                vm_all_pts = self.voronoi.E_inf
+                self.vm_all = gl.GLLinePlotItem(pos=vm_all_pts,color=pg.glColor('w'),width=1.0,mode='lines')
+                self.w.addItem(self.vm_all)
+                vm_pts = self.voronoi.E
+                self.vm = gl.GLLinePlotItem(pos=vm_pts,color=pg.glColor('y'),width=1.0,mode='lines')
+                self.w.addItem(self.vm)
+                self.voronoi_made = True
+            if self.step > 5:
+                self.voronoi.graph(self.step)
+                vm_all_pts = self.voronoi.E_inf
+                self.vm_all.setData(pos=vm_all_pts)
+                vm_pts = self.voronoi.E
+                self.vm.setData(pos=vm_pts)
             if self.reference_frame == 'inertial':
                 for k in range(self.own_items):
                     self.own_3d[k].translate(-self.own_states[0,self.step-1],
@@ -278,7 +288,11 @@ class Visualization(QtCore.QThread):
                     if self.threshold_flag_timer == 60:
                         self.threshold_flag_timer = 0
                         self.own_3d[18].setVisible(False)
-            if self.reference_frame != 'inertial':
+            if self.reference_frame != 'inertial' and self.step > 5:
+                self.vm_all.rotate(self.own_rotate,0,0,1)
+                self.vm_all.translate(self.own_states[0,self.step-1],self.own_states[1,self.step-1],0)
+                self.vm_all.translate(-self.own_states[0,self.step],-self.own_states[1,self.step],0)
+                self.vm_all.rotate(-self.own_theta,0,0,1)
                 self.vm.rotate(self.own_rotate,0,0,1)
                 self.vm.translate(self.own_states[0,self.step-1],self.own_states[1,self.step-1],0)
                 self.vm.translate(-self.own_states[0,self.step],-self.own_states[1,self.step],0)
@@ -296,6 +310,8 @@ class Visualization(QtCore.QThread):
                                               self.intr_states[1,0,ii]-self.intr_states[1,self.step,ii],
                                               self.intr_states[2,0,ii]-self.intr_states[2,self.step,ii])
             else:
+                self.vm_all.rotate(self.own_rotate,0,0,1)
+                self.vm_all.translate(self.own_states[0,self.step],self.own_states[1,self.step],0)
                 self.vm.rotate(self.own_rotate,0,0,1)
                 self.vm.translate(self.own_states[0,self.step],self.own_states[1,self.step],0)
 
