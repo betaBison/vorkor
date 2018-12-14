@@ -215,7 +215,7 @@ class Visualization(QtCore.QThread):
                 self.vm_path = gl.GLLinePlotItem(pos=vm_path_pts,color=pg.glColor('m'),width=4.0,mode='lines')
                 self.w.addItem(self.vm_path)
                 self.voronoi_made = True
-                print("happening")
+
             time0 = time.time()
             if self.step > 5:
                 self.voronoi.graph(self.step)
@@ -228,7 +228,7 @@ class Visualization(QtCore.QThread):
                 self.vm.setData(pos=vm_pts)
                 vm_path_pts = self.voronoi.path_pts
                 self.vm_path.setData(pos=vm_path_pts)
-                print(time1-time0,time2-time1,time3-time2)
+                #print(time1-time0,time2-time1,time3-time2)
 
             if self.reference_frame == 'inertial':
                 for k in range(self.own_items):

@@ -2,6 +2,7 @@ from Vehicle import Vehicle
 import param
 import numpy as np
 from vmd import *
+from math import atan2
 
 class Ownship(Vehicle):
     def __init__(self,type):
@@ -33,14 +34,17 @@ class Ownship(Vehicle):
         else:
             return True
 
-    def prop_state(self):
+    def prop_state(self,own_waypoint):
         self.time += param.dt
         vel = self.states[3]
+        if any(own_waypoint):
+            psi_des = atan2(own_waypoint[1]-self.states[1],own_waypoint[0]-self.states[0])
+            self.states[8] = rad_wrap_2pi(psi_des)
         ang = self.states[8]
         self.states[0] += param.dt*vel*np.cos(ang)
-        #self.states[1] += param.dt*vel*np.sin(ang)
+        self.states[1] += param.dt*vel*np.sin(ang)
         #self.states[1] = 30.0*param.dt*vel*np.sin(self.time)
-        self.states[1] += 0.01*param.dt*vel*self.time**2
+        #self.states[1] += 0.01*param.dt*vel*self.time**2
         new_index = len(self.state_history[0])
         self.state_history[0][new_index:new_index] = [self.time]
         for ii in range(len(self.states)):
