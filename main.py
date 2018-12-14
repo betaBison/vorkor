@@ -29,10 +29,7 @@ import matplotlib.pyplot as plt
 ''''
 TODO:
 
-Make ownship turn towards voronoi
-Make speedy voronoi for path planning without extra arrays
 Fix hold up on decreaseKey in pqueue
-Go through voronoi and double check arrays to pass
 Fix rotation of voronoi in body frame
 Fix cost equations for voronoi
 remove extra steps in cost calculations
