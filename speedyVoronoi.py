@@ -57,16 +57,19 @@ class SpeedyVoronoi():
 
 
         # assign weight
-        weight = np.zeros((len(self.ridge),5))
+        weight = np.zeros((len(self.ridge),10))
         weight[:,0] += self.ownship.dr*1e9
         # 0 = closest distance to edge
         # 1 = index of closest point
         # 2 = weight
         # 3 = d_prime
         # 4 = cost
-
+        print(len(self.ridge))
         for ii in range(len(self.ridge)):
             avg_point = (self.V[self.ridge[ii][0]] + self.V[self.ridge[ii][1]])/2.0
+            weight[ii,5] = avg_point[0]
+            weight[ii,6] = avg_point[1]
+            weight[ii,7] = ii
             for jj in range(self.intruder_states.shape[0]):
                 new_distance = self.calcDistance(avg_point,self.intruder_states[jj])
                 if new_distance < weight[ii,0]:
@@ -80,6 +83,9 @@ class SpeedyVoronoi():
             else:
                 weight[ii,3] = self.calcWeight(self.intruder_states[int(weight[ii,1])],self.V[self.ridge[ii][0]],self.V[self.ridge[ii][1]])
             weight[ii,4] = self.calcCost(self.V[self.ridge[ii][0]],self.V[self.ridge[ii][1]],weight[ii,3])
+        suspect = (np.argmin(weight[:,3]))
+        print(weight[suspect,3])
+        print(weight[suspect,4])
 
         #print(weight)
         time1 = time.time()
@@ -136,20 +142,16 @@ class SpeedyVoronoi():
         return distance
 
     def calcSigmaStar(self,p,v1,v2):
-        A = np.reshape((v1-p),(1,2))
-        B = np.reshape((v1-v2),(2,1))
-        ans = (np.matmul(A,B)/(np.linalg.norm(v1-v2))**2).item(0)
+        ans = (np.matmul((v1-p),np.transpose(v1-v2))/(np.linalg.norm(v1-v2))**2)
         return ans
 
     def calcWeight(self,p,v1,v2):
-        A = np.reshape((v1-p),(1,2))
-        B = np.reshape((v1-v2),(2,1))
-        ans = np.sqrt((np.linalg.norm(p-v1))**2 - ((np.matmul(A,B)**2)/(np.linalg.norm(v1-v2))**2).item(0))
+        ans = np.sqrt((np.linalg.norm(p-v1))**2 - ((np.matmul((v1-p),np.transpose(v1-v2))**2)/(np.linalg.norm(v1-v2))**2))
         return ans
 
     def calcCost(self,v1,v2,D):
         k1 = 0.1
-        k2 = 0.9
+        k2 = 10.0
         cost = k1*np.linalg.norm(v1-v2)+k2/D
         return cost
 
