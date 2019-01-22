@@ -5,17 +5,17 @@ from importlib import reload
 import Intruder
 import Ownship
 import Visualization
-import voronoiMagic
+import slowVisualVoronoi
 import speedyVoronoi
 reload(Intruder)
 reload(Ownship)
 reload(Visualization)
-reload(voronoiMagic)
+reload(slowVisualVoronoi)
 reload(speedyVoronoi)
 from Intruder import Intruder
 from Ownship import Ownship
 from Visualization import Visualization as vis
-from voronoiMagic import VoronoiMagic as Voronoi
+from slowVisualVoronoi import slowVisualVoronoi as Voronoi
 from speedyVoronoi import SpeedyVoronoi as sVoronoi
 
 import numpy as np
@@ -28,6 +28,8 @@ import matplotlib.pyplot as plt
 
 ''''
 TODO:
+
+follow the UAV book instructions instead of finding the avg point!
 
 Fix hold up on decreaseKey in pqueue
 Fix rotation of voronoi in body frame
@@ -46,6 +48,8 @@ Go through thesis again
 propagate dynamics correctly
 
 compute chord if there is a collision
+
+
 '''
 
 

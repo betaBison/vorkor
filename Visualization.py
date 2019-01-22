@@ -13,7 +13,7 @@ from math import *
 from visMods import *
 import error_codes
 import vmd
-from voronoiMagic import VoronoiMagic as VM
+from slowVisualVoronoi import slowVisualVoronoi as VM
 
 ####### Debugging
 import time
