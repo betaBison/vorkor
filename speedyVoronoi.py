@@ -54,6 +54,7 @@ class SpeedyVoronoi():
             end_index = len(vor.vertices)+1
             closest_index = int(closest[ii,1])
             self.ridge.append([closest_index,end_index])
+        self.ridge.append([start_index,end_index])
 
 
         # assign weight
