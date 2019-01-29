@@ -10,6 +10,7 @@ class Ownship(Vehicle):
         self.states[0:3] = [0.,0.,0.]
         # initial airspeed set to 80kn p.118
         self.states[3:6] = [41.1556,0.,0.]
+        #self.states[3:6] = [150.0,0.,0.] # too fast (for testing)
         self.states[6:9] = [0.,0.,0.]
         self.states[9:12] = [0.,0.,0.]
         self.state_history[0][0:0] = [self.time]
