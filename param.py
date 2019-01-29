@@ -1,5 +1,6 @@
 from math import pi
-import param
+import numpy as np
+
 
 # LONG-RANGE PARAMETERS
 # short-range radius = 1.62nmi p.118
@@ -44,6 +45,11 @@ intruder_spectrum = pi # radians
 intruder_pos_places = 20
 # initial intruder height
 intruder_height = 0.0
+
+#OWNSHIP PARAMETERS
+# end destination
+#end = np.array([[0,1.2*self.ownship.dr]])
+end = np.array([[0.8*dr_short,0.8*dr_short]])
 
 # VISUALIZATION PARAMETERS
 dt = 0.050      # sec, time step
