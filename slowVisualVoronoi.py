@@ -5,6 +5,7 @@ import vmd
 import math
 import time
 import voronoiTools as VT
+import param as P
 
 class slowVisualVoronoi():
     def __init__(self,ownship,intruders):
@@ -17,7 +18,7 @@ class slowVisualVoronoi():
         self.num_closest_points = 3
         for ii in range(self.intruder_num):
             self.intruder_states[:,:,ii] = np.matmul(vmd.enu2ned_mat,np.array(self.intruders[ii].state_history[1:4]))
-        self.end = np.array([[0,1.2*self.ownship.dr]])
+        self.end = P.end
         #print(self.ownship_states[:,0])
         #print(self.intruder_states[:,0,:])
 
@@ -42,7 +43,8 @@ class slowVisualVoronoi():
                 # Draw a line from v0 to v1.
                 #plt.plot([v0[0], v1[0]], [v0[1], v1[1]], 'g')
 
-
+        if len(vor.vertices) < self.num_closest_points:
+            self.num_closest_points = len(vor.vertices)
         closest = np.ones((self.num_closest_points,2),dtype=float)
         closest*=self.ownship.dr*1e90
         for ii in range(len(vor.vertices)):

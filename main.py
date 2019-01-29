@@ -29,14 +29,11 @@ import matplotlib.pyplot as plt
 ''''
 TODO:
 
-follow the UAV book instructions instead of finding the avg point!
+** Most Urgent **
+Add 1 obstaccle compatiblity tp slowVisualVoronoi
+Fix body frame rotation errors in voronoi display
 
-Fix hold up on decreaseKey in pqueue
 Fix rotation of voronoi in body frame
-Fix cost equations for voronoi
-remove extra steps in cost calculations
-simplify voronoi code with intent to increase speed
-
 
 fix bug where cylinders only turn white on the first run
 
@@ -45,7 +42,7 @@ Go through thesis again
     What is the goal point?
     Do the intruders climb?
     Will we climb?
-propagate dynamics correctly
+propagate dynamics correctly (radius turns)
 
 compute chord if there is a collision
 
@@ -85,9 +82,10 @@ def main():
 
         encounter = [True]
         colision = [False]
+        arrived = False
         mm = 0
-        #while any(encounter) and not any(colision):
-        while mm <= 1000:
+        #while mm <= 1000:
+        while any(encounter) and not any(colision) and not(arrived):
             mm += 1
             if mm %100 == 0:
                 print(mm)
@@ -99,6 +97,8 @@ def main():
                 intruder_list[ii].prop_state(o1.states)
                 colision.append(intruder_list[ii].colision)
                 encounter.append(o1.encounter_circle(intruder_list[ii].states))
+            if np.linalg.norm(o1.states[0:2] - svoronoi.end) < 15.0:
+                arrived = True
 
             #
         #
@@ -107,6 +107,8 @@ def main():
         for ii in range(intruder_num):
             threshold.append(intruder_list[ii].threshold)
             separation.append(intruder_list[ii].separation)
+
+
         #
         if any(colision) == True:
             for ll in range(intruder_num):

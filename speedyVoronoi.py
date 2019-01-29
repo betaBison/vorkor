@@ -5,6 +5,7 @@ import vmd
 import math
 import time
 import voronoiTools as VT
+import param as P
 
 class SpeedyVoronoi():
     def __init__(self,ownship,intruders):
@@ -13,7 +14,8 @@ class SpeedyVoronoi():
         self.intruder_num = len(self.intruders)
         self.intruder_states = np.zeros((self.intruder_num,2),dtype=float)
         self.num_closest_points = 3
-        self.end = np.array([[1.2*self.ownship.dr,0]])
+        self.end = P.end
+
 
     def graph(self,ownship_states,intruders):
         time0 = time.time()
@@ -22,40 +24,53 @@ class SpeedyVoronoi():
         for ii in range(self.intruder_num):
             self.intruder_states[ii,:] = self.intruders[ii].states[0:2]
 
-        vor = Voronoi(self.intruder_states)
+
+        start = np.array([self.ownship_states])
+        if self.intruder_num > 1:
+            vor = Voronoi(self.intruder_states)
+            self.ridge = vor.ridge_vertices
+            self.V = np.concatenate((vor.vertices,start,self.end),axis=0)
+            num_vertices = len(vor.vertices)
+        else:
+            self.ridge = []
+            self.V = np.concatenate((start,self.end),axis=0)
+            num_vertices = 0
+        '''
         if len(vor.vertices) < 3:
             return [None, None]
-        start = np.array([self.ownship_states])
+        '''
 
-        self.V = np.concatenate((vor.vertices,start,self.end),axis=0)
+
+
         #voronoi_plot_2d(vor,line_colors='black',show_vertices=True)
-        self.ridge = vor.ridge_vertices
+
         self.ridge = list(filter(lambda x: x[0] >= 0, self.ridge))
 
+        if num_vertices < self.num_closest_points:
+            self.num_closest_points = num_vertices
         closest = np.ones((self.num_closest_points,2),dtype=float)
         closest*=self.ownship.dr*1e90
-        for ii in range(len(vor.vertices)):
+        for ii in range(num_vertices):
             distance = VT.calcDistance(vor.vertices[ii],start[0])
             if distance < np.amax(closest[:,0]):
                 closest[np.argmax(closest[:,0]),1] = ii
                 closest[np.argmax(closest[:,0]),0] = distance
+        start_index = num_vertices
         for ii in range(self.num_closest_points):
-            start_index = len(vor.vertices)
             closest_index = int(closest[ii,1])
             self.ridge.append([closest_index,start_index])
         closest = np.ones((self.num_closest_points,2),dtype=float)
         closest*=self.ownship.dr*1e9
-        for ii in range(len(vor.vertices)):
+        for ii in range(num_vertices):
             distance = VT.calcDistance(vor.vertices[ii],self.end[0])
             if distance < np.amax(closest[:,0]):
                 closest[np.argmax(closest[:,0]),1] = ii
                 closest[np.argmax(closest[:,0]),0] = distance
+        end_index = num_vertices+1
         for ii in range(self.num_closest_points):
-            end_index = len(vor.vertices)+1
             closest_index = int(closest[ii,1])
             self.ridge.append([closest_index,end_index])
         self.ridge.append([start_index,end_index])
-
 
         # assign weight
         weight = np.zeros((len(self.ridge),1))
@@ -75,7 +90,6 @@ class SpeedyVoronoi():
         time1 = time.time()
         path = VT.dijkstraSearch(self.V,self.ridge,weight)
         time2 = time.time()
-
 
         self.next = self.V[path[1]]
         return self.next
