@@ -51,7 +51,7 @@ class Visualization(QtCore.QThread):
         pg.setConfigOptions(antialias=True)
         self.app = QtGui.QApplication([])
         self.w = gl.GLViewWidget()
-        self.w.setWindowTitle('pyqtgraph example: GLScatterPlotItem')
+        self.w.setWindowTitle('VORKOR: Voronoi Path Planning Visualization')
         self.w.opts['distance'] = 2.0*self.ownship.dr
         self.w.show()
         self.w.setBackgroundColor('k')
