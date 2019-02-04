@@ -30,10 +30,10 @@ import matplotlib.pyplot as plt
 TODO:
 
 ** Most Urgent **
-Add 1 obstaccle compatiblity tp slowVisualVoronoi
 Fix body frame rotation errors in voronoi display
+Calculate a better constant for weight given the colision volume
 
-Fix rotation of voronoi in body frame
+Add 1 obstaccle compatiblity tp slowVisualVoronoi
 
 fix bug where cylinders only turn white on the first run
 

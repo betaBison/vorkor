@@ -26,16 +26,30 @@ class slowVisualVoronoi():
         time0 = time.time()
         self.E = []
         self.points = np.transpose(self.intruder_states[0:2,step,:])
-        vor = Voronoi(self.points)
+
         start = np.array([np.transpose(self.ownship_states[1:3,step])])
         start = np.array([np.transpose([start[0,1],start[0,0]])])
 
-        self.V = np.concatenate((vor.vertices,start,self.end),axis=0)
+        if self.intruder_num > 2:
+            vor = Voronoi(self.points)
+            self.ridge = vor.ridge_vertices
+            self.V = np.concatenate((vor.vertices,start,self.end),axis=0)
+            num_vertices = len(vor.vertices)
+            self.ridge_points = vor.ridge_points
+        else:
+            self.ridge = []
+            self.ridge_points = []
+            self.V = np.concatenate((start,self.end),axis=0)
+            num_vertices = 0
+
+
+
+
         #voronoi_plot_2d(vor,line_colors='white',show_vertices=False)
 
-        self.ridge = vor.ridge_vertices
 
-        for vpair in vor.ridge_vertices:
+
+        for vpair in self.ridge:
             if vpair[0] >= 0 and vpair[1] >= 0:
                 v0 = vor.vertices[vpair[0]]
                 v1 = vor.vertices[vpair[1]]
@@ -43,29 +57,29 @@ class slowVisualVoronoi():
                 # Draw a line from v0 to v1.
                 #plt.plot([v0[0], v1[0]], [v0[1], v1[1]], 'g')
 
-        if len(vor.vertices) < self.num_closest_points:
-            self.num_closest_points = len(vor.vertices)
+        if num_vertices < self.num_closest_points:
+            self.num_closest_points = num_vertices
         closest = np.ones((self.num_closest_points,2),dtype=float)
         closest*=self.ownship.dr*1e90
-        for ii in range(len(vor.vertices)):
+        for ii in range(num_vertices):
             distance = VT.calcDistance(vor.vertices[ii],start[0])
             if distance < np.amax(closest[:,0]):
                 closest[np.argmax(closest[:,0]),1] = ii
                 closest[np.argmax(closest[:,0]),0] = distance
+        start_index = num_vertices
         for ii in range(self.num_closest_points):
-            start_index = len(vor.vertices)
             closest_index = int(closest[ii,1])
             self.ridge.append([closest_index,start_index])
             self.E.append([[vor.vertices[int(closest[ii,1]),0], vor.vertices[int(closest[ii,1]),1]],[start[0][0],start[0][1]]])
         closest = np.ones((self.num_closest_points,2),dtype=float)
         closest*=self.ownship.dr*1e9
-        for ii in range(len(vor.vertices)):
+        for ii in range(num_vertices):
             distance = VT.calcDistance(vor.vertices[ii],self.end[0])
             if distance < np.amax(closest[:,0]):
                 closest[np.argmax(closest[:,0]),1] = ii
                 closest[np.argmax(closest[:,0]),0] = distance
+        end_index = num_vertices+1
         for ii in range(self.num_closest_points):
-            end_index = len(vor.vertices)+1
             closest_index = int(closest[ii,1])
             self.ridge.append([closest_index,end_index])
             self.E.append([[vor.vertices[int(closest[ii,1]),0], vor.vertices[int(closest[ii,1]),1]],[self.end[0][0],self.end[0][1]]])
@@ -76,7 +90,7 @@ class slowVisualVoronoi():
 
         self.E_inf = []
         center = self.points.mean(axis=0)
-        for pointidx, simplex in zip(vor.ridge_points, vor.ridge_vertices):
+        for pointidx, simplex in zip(self.ridge_points, self.ridge):
             simplex = np.asarray(simplex)
             if np.any(simplex < 0):
                 i = simplex[simplex >= 0][0] # finite end Voronoi vertex

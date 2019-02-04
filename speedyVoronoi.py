@@ -26,7 +26,7 @@ class SpeedyVoronoi():
 
 
         start = np.array([self.ownship_states])
-        if self.intruder_num > 1:
+        if self.intruder_num > 2:
             vor = Voronoi(self.intruder_states)
             self.ridge = vor.ridge_vertices
             self.V = np.concatenate((vor.vertices,start,self.end),axis=0)
