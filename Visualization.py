@@ -21,7 +21,7 @@ import time
 
 
 class Visualization(QtCore.QThread):
-    def __init__(self,ownship,intruders,reference_frame):
+    def __init__(self,ownship,intruders,reference_frame,own_waypoints):
         QtCore.QThread.__init__(self)
         self.ownship = ownship
         self.own_states = np.matmul(vmd.enu2ned_mat,np.array(self.ownship.state_history[1:4]))
@@ -33,6 +33,7 @@ class Visualization(QtCore.QThread):
         self.intr_states = np.zeros((3,self.total_steps,self.intruder_num),dtype=float)
         if self.reference_frame != 'body' and self.reference_frame != 'inertial':
             error_codes.error3()
+        self.own_waypoints = own_waypoints
 
 
         for ii in range(self.intruder_num):
@@ -214,10 +215,20 @@ class Visualization(QtCore.QThread):
                 self.vm_path = gl.GLLinePlotItem(pos=vm_path_pts,color=pg.glColor('m'),width=4.0,mode='lines')
                 self.w.addItem(self.vm_path)
                 self.voronoi_made = True
+                if self.reference_frame != 'inertial':
+                    self.vm_all.translate(-self.own_states[0,self.step],-self.own_states[1,self.step],0)
+                    self.vm.translate(-self.own_states[0,self.step],-self.own_states[1,self.step],0)
+                    self.vm_path.translate(-self.own_states[0,self.step],-self.own_states[1,self.step],0)
+
 
             time0 = time.time()
             if self.step > 5:
-                self.voronoi.graph(self.step)
+                #self.voronoi.graph(self.step)
+                next_waypoint,current_spot,min_value = self.voronoi.graph(self.step)
+                #print("I think I'm here:",current_spot,self.own_states[0:2,self.step])
+                #print(self.own_waypoints[self.step-1])
+                #print("I want to go here:",next_waypoint,self.own_waypoints[self.step-1][0])
+                #print("Lowest cost = ",min_value,self.own_waypoints[self.step-1][1])
                 time1 = time.time()
                 vm_all_pts = self.voronoi.E_inf
                 time2 = time.time()
@@ -228,34 +239,37 @@ class Visualization(QtCore.QThread):
                 vm_path_pts = self.voronoi.path_pts
                 self.vm_path.setData(pos=vm_path_pts)
                 #print(time1-time0,time2-time1,time3-time2)
-
-            if self.reference_frame == 'inertial':
-                for k in range(self.own_items):
+            for k in range(self.own_items):
+                if self.reference_frame == 'inertial':
                     self.own_3d[k].translate(-self.own_states[0,self.step-1],
                                              -self.own_states[1,self.step-1],
                                              -self.own_states[2,self.step-1])
-                    self.own_3d[k].rotate(self.own_theta-self.own_rotate,0,0,1)
+                self.own_3d[k].rotate(self.own_theta-self.own_rotate,0,0,1)
+                if self.reference_frame == 'inertial':
                     self.own_3d[k].translate(self.own_states[0,self.step],
                                              self.own_states[1,self.step],
                                              self.own_states[2,self.step])
 
             for k in range(self.intruder_num):
                 if self.reference_frame == 'inertial':
+                    print("inertial")
                     intr_dx = self.intr_states[0,self.step,k] - self.intr_states[0,self.step-1,k]
                     intr_dy = self.intr_states[1,self.step,k] - self.intr_states[1,self.step-1,k]
                     intr_dz = self.intr_states[2,self.step,k] - self.intr_states[2,self.step-1,k]
                     self.itr_3d[k].translate(intr_dx,intr_dy,intr_dz)
                 else:
-                    self.itr_3d[k].rotate(self.own_rotate,0,0,1)
+                    #self.itr_3d[k].rotate(self.own_rotate,0,0,1)
                     if self.step == 1:
                         self.dif_dx[k] = self.intr_states[0,self.step-1,k] - self.own_states[0,self.step-1]
                         self.dif_dy[k] = self.intr_states[1,self.step-1,k] - self.own_states[1,self.step-1]
                     self.itr_3d[k].translate(-self.dif_dx[k],-self.dif_dy[k],0)
+
                     self.dif_dx[k] = self.intr_states[0,self.step,k] - self.own_states[0,self.step]
                     self.dif_dy[k] = self.intr_states[1,self.step,k] - self.own_states[1,self.step]
                     self.itr_3d[k].translate(self.dif_dx[k],self.dif_dy[k],0.0)
                     #self.intr_theta = degrees(atan2(self.dif_dy,self.dif_dx))
-                    self.itr_3d[k].rotate(-self.own_theta,0,0,1)
+                    #self.itr_3d[k].rotate(-self.own_theta,0,0,1)
+
             for k in range(self.intruder_num):
                 if ((self.intr_states[0,self.step,k]-self.own_states[0,self.step])**2 + (self.intr_states[1,self.step,k]-self.own_states[1,self.step])**2) <= self.ownship.dcol**2 and abs(self.intr_states[2,self.step,k]-self.own_states[2,self.step]) <= self.ownship.hcol:
                      in_circle = True
@@ -293,32 +307,28 @@ class Visualization(QtCore.QThread):
                 if self.threshold_flag_timer == 6:
                     self.threshold_flag_timer = 0
                     self.own_3d[18].setVisible(False)
+
             if self.reference_frame != 'inertial' and self.step > 5:
-                self.vm_all.rotate(self.own_rotate,0,0,1)
-                self.vm_all.translate(-self.own_states[0,self.step-1],-self.own_states[1,self.step-1],0)
-                self.vm_all.translate(self.own_states[0,self.step],self.own_states[1,self.step],0)
-                self.vm_all.rotate(-self.own_theta,0,0,1)
-                self.vm.rotate(self.own_rotate,0,0,1)
-                self.vm.translate(-self.own_states[0,self.step-1],-self.own_states[1,self.step-1],0)
-                self.vm.translate(self.own_states[0,self.step],self.own_states[1,self.step],0)
-                self.vm.rotate(-self.own_theta,0,0,1)
-                self.vm_path.rotate(self.own_rotate,0,0,1)
-                self.vm_path.translate(-self.own_states[0,self.step-1],-self.own_states[1,self.step-1],0)
-                self.vm_path.translate(self.own_states[0,self.step],self.own_states[1,self.step],0)
-                self.vm_path.rotate(-self.own_theta,0,0,1)
-                '''
-                self.own_3d[k].translate(-self.own_states[0,self.step-1],
-                                         -self.own_states[1,self.step-1],
-                                         -self.own_states[2,self.step-1])
-                self.own_3d[k].rotate(self.own_theta-self.own_rotate,0,0,1)
-                self.own_3d[k].translate(self.own_states[0,self.step],
-                                         self.own_states[1,self.step],
-                                         self.own_states[2,self.step])
-                '''
+                #self.vm_all.rotate(self.own_rotate,0,0,1)
+                self.vm_all.translate(self.own_states[0,self.step-1],self.own_states[1,self.step-1],0)
+                #self.vm_all.rotate(-self.own_theta+self.own_rotate,0,0,1)
+                self.vm_all.translate(-self.own_states[0,self.step],-self.own_states[1,self.step],0)
+                #self.vm_all.rotate(-self.own_theta,0,0,1)
+                #self.vm.rotate(self.own_rotate,0,0,1)
+                self.vm.translate(self.own_states[0,self.step-1],self.own_states[1,self.step-1],0)
+                #self.vm.rotate(-self.own_theta+self.own_rotate,0,0,1)
+                self.vm.translate(-self.own_states[0,self.step],-self.own_states[1,self.step],0)
+                #self.vm.rotate(-self.own_theta,0,0,1)
+                #self.vm_path.rotate(self.own_rotate,0,0,1)
+                self.vm_path.translate(self.own_states[0,self.step-1],self.own_states[1,self.step-1],0)
+                #self.vm_path.rotate(-self.own_theta+self.own_rotate,0,0,1)
+                self.vm_path.translate(-self.own_states[0,self.step],-self.own_states[1,self.step],0)
+                #self.vm_path.rotate(-self.own_theta,0,0,1)
 
 
         else:
             if self.reference_frame == 'inertial':
+                print("inertial")
                 for ii in range(self.own_items):
                     self.own_3d[ii].translate(self.own_states[0,0]-self.own_states[0,self.step],
                                               self.own_states[1,0]-self.own_states[1,self.step],
@@ -328,21 +338,21 @@ class Visualization(QtCore.QThread):
                                               self.intr_states[1,0,ii]-self.intr_states[1,self.step,ii],
                                               self.intr_states[2,0,ii]-self.intr_states[2,self.step,ii])
             else:
-                self.vm_all.rotate(self.own_rotate,0,0,1)
-                self.vm_all.translate(self.own_states[0,self.step],self.own_states[1,self.step],0)
-                self.vm.rotate(self.own_rotate,0,0,1)
-                self.vm.translate(self.own_states[0,self.step],self.own_states[1,self.step],0)
-                self.vm_path.rotate(self.own_rotate,0,0,1)
-                self.vm_path.translate(self.own_states[0,self.step],self.own_states[1,self.step],0)
-
+                #self.vm_all.rotate(self.own_rotate,0,0,1)
+                #self.vm_all.translate(self.own_states[0,self.step],self.own_states[1,self.step],0)
+                self.vm_all.translate(self.own_states[0,self.step-1],self.own_states[1,self.step-1],0)
+                #self.vm.rotate(self.own_rotate,0,0,1)
+                self.vm.translate(self.own_states[0,self.step-1],self.own_states[1,self.step-1],0)
+                #self.vm_path.rotate(self.own_rotate,0,0,1)
+                self.vm_path.translate(self.own_states[0,self.step-1],self.own_states[1,self.step-1],0)
                 for ii in range(self.intruder_num):
-                    self.itr_3d[ii].rotate(self.own_rotate,0,0,1)
+                    #self.itr_3d[ii].rotate(self.own_rotate,0,0,1)
                     self.itr_3d[ii].translate(-self.dif_dx[ii],-self.dif_dy[ii],0)
                     self.dif_dx[ii] = self.intr_states[0,0,ii] - self.own_states[0,0]
                     self.dif_dy[ii] = self.intr_states[1,0,ii] - self.own_states[1,0]
                     self.itr_3d[ii].translate(self.dif_dx[ii],self.dif_dy[ii],0.0)
-                    self.own_theta = 0
             self.step = 0
+            self.own_theta = 0
             self.intruder_status = np.zeros((self.intruder_num,3),dtype=bool)
         self.own_rotate = self.own_theta
         self.app.processEvents()
