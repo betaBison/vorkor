@@ -47,9 +47,9 @@ intruder_pos_places = 20
 intruder_height = 0.0
 
 #OWNSHIP PARAMETERS
-# end destination
+# end destination [north position, east position]
 #end = np.array([[0,1.2*self.ownship.dr]])
-end = np.array([[0.8*dr_short,0.8*dr_short]])
+end = np.array([[1.2*dr_short,0.0*dr_short]])
 
 # VISUALIZATION PARAMETERS
 dt = 0.050      # sec, time step
