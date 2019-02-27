@@ -18,15 +18,12 @@ class slowVisualVoronoi():
         self.num_closest_points = 3
         for ii in range(self.intruder_num):
             self.intruder_states[:,:,ii] = np.matmul(vmd.enu2ned_mat,np.array(self.intruders[ii].state_history[1:4]))
-        self.end = P.end
-        #print(self.ownship_states[:,0])
-        #print(self.intruder_states[:,0,:])
+        self.end = np.array([[P.end.item(1),P.end.item(0)]])
 
     def graph(self,step):
         time0 = time.time()
         self.E = []
         self.points = np.transpose(self.intruder_states[0:2,step,:])
-
         start = np.array([np.transpose(self.ownship_states[1:3,step])])
         start = np.array([np.transpose([start[0,1],start[0,0]])])
 
@@ -147,4 +144,6 @@ class slowVisualVoronoi():
         self.path_pts = np.asarray(self.path_pts)
 
         time3 = time.time()
+
+        return self.V[path[1]],start,np.amax(weight)
         #print("VM total =",time3-time0,time1-time0,time2-time1,time3-time2)

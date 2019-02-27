@@ -74,6 +74,7 @@ class SpeedyVoronoi():
 
         # assign weight
         weight = np.zeros((len(self.ridge),1))
+        self.ridge = list(filter(lambda x: x[0] >= 0, self.ridge))
         for ii in range(len(self.ridge)):
             D_prime = np.zeros((self.intruder_states.shape[0],1))
             for jj in range(self.intruder_states.shape[0]):
@@ -92,4 +93,4 @@ class SpeedyVoronoi():
         time2 = time.time()
 
         self.next = self.V[path[1]]
-        return self.next
+        return self.next,np.amax(weight)

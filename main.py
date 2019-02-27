@@ -26,16 +26,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 ###
 
-''''
+'''
 TODO:
 
 ** Most Urgent **
-Fix body frame rotation errors in voronoi display
+Fix issue in voronoi difference between fast and slow
 Calculate a better constant for weight given the colision volume
 
+Add body frame rotation in voronoi display
 Add 1 obstaccle compatiblity tp slowVisualVoronoi
-
-fix bug where cylinders only turn white on the first run
 
 Go through thesis again
     What are acutal height/diamter dimensions
@@ -45,8 +44,6 @@ Go through thesis again
 propagate dynamics correctly (radius turns)
 
 compute chord if there is a collision
-
-
 '''
 
 
@@ -58,7 +55,7 @@ def main():
     intruder_num = 20
     type = 'short'                  #options are 'short' or 'long'
     simulations = 1
-    reference_frame = 'inertial'    # options are 'inertial' or 'body'
+    reference_frame = 'body'    # options are 'inertial' or 'body'
 
     o1 = Ownship(type)
     o1.intruder_pos_places()
@@ -84,12 +81,14 @@ def main():
         colision = [False]
         arrived = False
         mm = 0
+        own_waypoints = []
         #while mm <= 1000:
         while any(encounter) and not any(colision) and not(arrived):
             mm += 1
             if mm %100 == 0:
                 print(mm)
-            own_waypoint = svoronoi.graph(o1.states,intruder_list)
+            own_waypoint,stuff = svoronoi.graph(o1.states,intruder_list)
+            own_waypoints.append([own_waypoint,stuff])
             o1.prop_state(own_waypoint)
             encounter = []
             colision = []
@@ -133,7 +132,7 @@ def main():
         '''
 
 
-        graph = vis(o1,intruder_list,reference_frame)
+        graph = vis(o1,intruder_list,reference_frame,own_waypoints)
         while(True):
             graph.update()
 
