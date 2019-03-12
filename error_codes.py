@@ -11,3 +11,7 @@ def error2():
 def error3():
     sys.exit("reference frame variable must be either 'inertial' or 'body' \
     in the main.py function.")
+
+def error4():
+    sys.exit("Invalid 'method' variable for propagation method in the main.py \
+function. Must be either 'voronoi' or 'bline'")

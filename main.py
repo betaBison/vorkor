@@ -7,16 +7,22 @@ import Ownship
 import Visualization
 import slowVisualVoronoi
 import speedyVoronoi
+import bline
 reload(Intruder)
 reload(Ownship)
 reload(Visualization)
 reload(slowVisualVoronoi)
 reload(speedyVoronoi)
+reload(bline)
 from Intruder import Intruder
 from Ownship import Ownship
 from Visualization import Visualization as vis
 from slowVisualVoronoi import slowVisualVoronoi as Voronoi
 from speedyVoronoi import SpeedyVoronoi as sVoronoi
+import error_codes
+from bline import NewPlanner
+import param as P
+
 
 import numpy as np
 # import random
@@ -55,7 +61,8 @@ def main():
     intruder_num = 20
     type = 'short'                  #options are 'short' or 'long'
     simulations = 1
-    reference_frame = 'body'    # options are 'inertial' or 'body'
+    reference_frame = 'inertial'    # options are 'inertial' or 'body'
+    method = 'bline'              # options are 'voronoi' or 'bline'
 
     o1 = Ownship(type)
     o1.intruder_pos_places()
@@ -74,21 +81,36 @@ def main():
         #     intruder_list.append(new_intruder)
         # #enu2ned_mat
         # set_trace()
-
-        svoronoi = sVoronoi(o1,intruder_list)
+        print("what")
+        if method == 'voronoi':
+            svoronoi = sVoronoi(o1,intruder_list)
+            print("heyo voronoi")
+        elif method == 'bline':
+            planner = NewPlanner()
+            print("heyo")
+        else:
+            error_codes.error4()
 
         encounter = [True]
         colision = [False]
         arrived = False
         mm = 0
-        own_waypoints = []
+        #own_waypoints = []
         #while mm <= 1000:
         while any(encounter) and not any(colision) and not(arrived):
             mm += 1
             if mm %100 == 0:
                 print(mm)
-            own_waypoint,stuff = svoronoi.graph(o1.states,intruder_list)
-            own_waypoints.append([own_waypoint,stuff])
+            if method == 'voronoi':
+                #own_waypoint,stuff = svoronoi.graph(o1.states,intruder_list)
+                own_waypoint = svoronoi.graph(o1.states,intruder_list)
+                print(own_waypoint)
+                #own_waypoints.append([own_waypoint,stuff])
+            else:
+                own_waypoint = planner.compute()
+                print(own_waypoint)
+
+
             o1.prop_state(own_waypoint)
             encounter = []
             colision = []
@@ -96,7 +118,7 @@ def main():
                 intruder_list[ii].prop_state(o1.states)
                 colision.append(intruder_list[ii].colision)
                 encounter.append(o1.encounter_circle(intruder_list[ii].states))
-            if np.linalg.norm(o1.states[0:2] - svoronoi.end) < 15.0:
+            if np.linalg.norm(o1.states[0:2] - P.end) < 15.0:
                 arrived = True
 
             #
@@ -125,14 +147,9 @@ def main():
     #
     #print(results)
 
-    if draw == True:# and any(colision)==True:
-        '''
-        voronoi = Voronoi(o1,intruder_list)
-        voronoi.graph(250)
-        '''
+    if draw == True:
 
-
-        graph = vis(o1,intruder_list,reference_frame,own_waypoints)
+        graph = vis(o1,intruder_list,reference_frame)#,own_waypoints)
         while(True):
             graph.update()
 
