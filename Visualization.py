@@ -21,7 +21,7 @@ import time
 
 
 class Visualization(QtCore.QThread):
-    def __init__(self,ownship,intruders,reference_frame,own_waypoints):
+    def __init__(self,ownship,intruders,reference_frame):#,own_waypoints):
         QtCore.QThread.__init__(self)
         self.ownship = ownship
         self.own_states = np.matmul(vmd.enu2ned_mat,np.array(self.ownship.state_history[1:4]))
@@ -33,7 +33,7 @@ class Visualization(QtCore.QThread):
         self.intr_states = np.zeros((3,self.total_steps,self.intruder_num),dtype=float)
         if self.reference_frame != 'body' and self.reference_frame != 'inertial':
             error_codes.error3()
-        self.own_waypoints = own_waypoints
+        #self.own_waypoints = own_waypoints
 
 
         for ii in range(self.intruder_num):
@@ -252,7 +252,6 @@ class Visualization(QtCore.QThread):
 
             for k in range(self.intruder_num):
                 if self.reference_frame == 'inertial':
-                    print("inertial")
                     intr_dx = self.intr_states[0,self.step,k] - self.intr_states[0,self.step-1,k]
                     intr_dy = self.intr_states[1,self.step,k] - self.intr_states[1,self.step-1,k]
                     intr_dz = self.intr_states[2,self.step,k] - self.intr_states[2,self.step-1,k]
@@ -328,7 +327,6 @@ class Visualization(QtCore.QThread):
 
         else:
             if self.reference_frame == 'inertial':
-                print("inertial")
                 for ii in range(self.own_items):
                     self.own_3d[ii].translate(self.own_states[0,0]-self.own_states[0,self.step],
                                               self.own_states[1,0]-self.own_states[1,self.step],

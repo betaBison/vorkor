@@ -93,4 +93,4 @@ class SpeedyVoronoi():
         time2 = time.time()
 
         self.next = self.V[path[1]]
-        return self.next,np.amax(weight)
+        return self.next#,np.amax(weight)
