@@ -3,6 +3,9 @@ import param
 import error_codes
 
 class Vehicle():
+    """
+    Generalized Vehicle class from which both the Ownship and Intruder inherit
+    """
     def __init__(self,type):
         self.state_history = [[],[],[],[],[],[],[],[],[],[],[],[],[]]
         self.states = []
@@ -25,4 +28,5 @@ class Vehicle():
             self.dcol = param.dcol_long
             self.hcol = param.hcol_long
         else:
+            # throw error if neither 'short' or 'long' is entered for simulation type
             error_codes.error1()

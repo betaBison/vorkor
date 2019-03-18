@@ -1,3 +1,7 @@
+"""
+Heap helper class for Dijkstra Searching
+"""
+
 class PqueueHeap:
     heap = []
     fill = 0

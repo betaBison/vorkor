@@ -17,7 +17,7 @@ class SpeedyVoronoi():
         self.end = P.end
 
 
-    def graph(self,ownship_states,intruders):
+    def compute(self,ownship_states,intruders):
         time0 = time.time()
         self.intruders = intruders
         self.ownship_states = ownship_states[0:2]

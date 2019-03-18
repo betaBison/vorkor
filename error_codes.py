@@ -1,5 +1,9 @@
 import sys
 
+"""
+These errors are called if the described error exsists
+"""
+
 def error1():
     sys.exit("Invalid 'type' variable for simulation type in the main.py \
 function. Must be either 'long' or 'short'")

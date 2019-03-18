@@ -1,6 +1,12 @@
 from math import pi
 import numpy as np
 
+"""
+Parameters based off of "Airborne Collision Detection and avoidance
+for Small UAS Sense and Avoid Systems"
+Dissertation by Laith Rasmi Sahaweh in 2016
+"""
+
 
 # LONG-RANGE PARAMETERS
 # short-range radius = 1.62nmi p.118

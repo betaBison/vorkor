@@ -2,6 +2,10 @@
 
 # Vorkor MoDules    -->     vmd name space
 
+"""
+Helper functions from THE Brady Anderson
+"""
+
 import numpy as np
 
 # length of Earth's semi-major and minor axes in meters
