@@ -1,6 +1,6 @@
 import numpy as np
 import param
-import error_codes
+import tools.error_codes
 
 class Vehicle():
     """

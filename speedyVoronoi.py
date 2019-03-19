@@ -1,10 +1,10 @@
 import matplotlib.pyplot as plt
 from scipy.spatial import Voronoi, voronoi_plot_2d
 import numpy as np
-import vmd
+import tools.vmd as vmd
 import math
 import time
-import voronoiTools as VT
+import tools.voronoiTools as VT
 import param as P
 
 class SpeedyVoronoi():

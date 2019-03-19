@@ -1,6 +1,6 @@
 import numpy as np
 import math as math
-from pqueue import PqueueHeap
+from tools.pqueue import PqueueHeap
 
 """
 Helper functions that both the speedy and slow voronoi classes use

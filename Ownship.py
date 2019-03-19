@@ -1,7 +1,7 @@
 from Vehicle import Vehicle
 import param
 import numpy as np
-from vmd import *
+from tools.vmd import *
 from math import atan2
 
 class Ownship(Vehicle):
@@ -10,7 +10,7 @@ class Ownship(Vehicle):
         self.states[0:3] = [0.,0.,0.] # initial position [north, east, down]
         # initial airspeed set to 80kn p.118
         self.states[3:6] = [41.1556,0.,0.] # initial velocity [u, v, w]
-        # self.states[3:6] = [80.0,0.,0.] # too fast (for testing)
+        #self.states[3:6] = [150.0,0.,0.] # too fast (for testing)
         self.states[6:9] = [0.,0.,0.] # initial angle [phi, theta, psi]
         self.states[9:12] = [0.,0.,0.]  # initial roll rates [p, q, r]
         self.state_history[0][0:0] = [self.time]

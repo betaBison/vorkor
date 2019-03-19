@@ -10,9 +10,9 @@ import sys
 import pyqtgraph as pg
 from PyQt5 import QtWidgets
 from math import *
-from visMods import *
-import error_codes
-import vmd
+from tools.visMods import *
+import tools.error_codes
+import tools.vmd as vmd
 from slowVisualVoronoi import slowVisualVoronoi as VM
 
 ####### Debugging

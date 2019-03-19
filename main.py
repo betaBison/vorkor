@@ -19,7 +19,7 @@ from Ownship import Ownship
 from Visualization import Visualization as vis
 from slowVisualVoronoi import slowVisualVoronoi as Voronoi
 from speedyVoronoi import SpeedyVoronoi as sVoronoi
-import error_codes
+import tools.error_codes
 from bline import NewPlanner
 import param as P
 
@@ -52,10 +52,10 @@ compute chord if there is a collision
 
 
 def main():
-    draw = False                    # whether it displays the graph afterwards or not
+    draw = True                    # whether it displays the graph afterwards or not
     intruder_num = 20               # number of intruder ships
     type = 'short'                  # simulation sizes options are 'short' or 'long'
-    simulations = 10                 # number of simulations to calculate in a row
+    simulations = 1                 # number of simulations to calculate in a row
     reference_frame = 'inertial'    # the refrence frame of the graph options are 'inertial' or 'body'
     method = 'voronoi'              # path planning method options are 'voronoi' or 'bline'
 
