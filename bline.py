@@ -2,6 +2,9 @@ import param as P
 import numpy as np
 
 class NewPlanner():
+    """
+    This planner plots a path directly to the end point
+    """
     def __init__(self):
         self.end = P.end
 

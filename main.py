@@ -22,8 +22,6 @@ from speedyVoronoi import SpeedyVoronoi as sVoronoi
 import tools.error_codes
 from bline import NewPlanner
 import param as P
-
-
 import numpy as np
 
 

@@ -21,7 +21,10 @@ def calcWeight(p,v1,v2):
 def calcCost(v1,v2,D):
     k1 = 1.0
     k2 = 1.0e12
-    cost = k1*np.linalg.norm(v1-v2)+k2/D
+    if D != 0:
+        cost = k1*np.linalg.norm(v1-v2)+k2/D
+    else:
+        cost = k1*np.linalg.norm(v1-v2)
     return cost
 
 

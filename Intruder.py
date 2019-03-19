@@ -5,6 +5,9 @@ import param
 from math import atan2
 
 class Intruder(Vehicle):
+    """
+    Class for intruder objects around the perimeter
+    """
     def __init__(self,type,initial_position):
         Vehicle.__init__(self,type)
         self.states[0:3] = initial_position # initial position [north, east, down]
