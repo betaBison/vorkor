@@ -1,5 +1,12 @@
 from math import pi
-import param
+import numpy as np
+
+"""
+Parameters based off of "Airborne Collision Detection and avoidance
+for Small UAS Sense and Avoid Systems"
+Dissertation by Laith Rasmi Sahaweh in 2016
+"""
+
 
 # LONG-RANGE PARAMETERS
 # short-range radius = 1.62nmi p.118
@@ -44,6 +51,11 @@ intruder_spectrum = pi # radians
 intruder_pos_places = 20
 # initial intruder height
 intruder_height = 0.0
+
+#OWNSHIP PARAMETERS
+# end destination [north position, east position]
+#end = np.array([[0,1.2*self.ownship.dr]])
+end = np.array([[1.2*dr_short,0.0*dr_short]])
 
 # VISUALIZATION PARAMETERS
 dt = 0.050      # sec, time step
