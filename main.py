@@ -4,10 +4,6 @@ Purpose:    Voronoi graph path planning and dynamic object avoidance
 Help:       contact knowles <dot> derek <AT> gmail <dot> com with any questions
 """
 
-
-
-from IPython.core.debugger import set_trace
-
 from importlib import reload
 
 import Intruder
